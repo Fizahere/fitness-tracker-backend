@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const nutritionSchema = new mongoose.Schema({
   user: {
@@ -21,11 +21,11 @@ const nutritionSchema = new mongoose.Schema({
       fats: Number
     }
   ],
-  date: {
+  createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
 const Nutrition = mongoose.model('Nutrition', nutritionSchema);
-module.exports = Nutrition;
+export default Nutrition;

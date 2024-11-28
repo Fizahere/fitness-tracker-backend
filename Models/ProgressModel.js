@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const progressSchema = new mongoose.Schema({
   user: {
@@ -20,11 +20,11 @@ const progressSchema = new mongoose.Schema({
     runTime: Number, 
     maxLift: Number
   },
-  date: {
+  createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
 const Progress = mongoose.model('Progress', progressSchema);
-module.exports = Progress;
+export default Progress;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const workoutSchema = new mongoose.Schema({
   user: {
@@ -24,11 +24,11 @@ const workoutSchema = new mongoose.Schema({
     enum: ['strength', 'cardio', 'flexibility', 'endurance'],
     required: true
   },
-  date: {
+  createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
 const Workout = mongoose.model('Workout', workoutSchema);
-module.exports = Workout;
+export default Workout;
