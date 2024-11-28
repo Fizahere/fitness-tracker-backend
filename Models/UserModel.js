@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true, 
+    unique: true,
   },
   email: {
     type: String,
@@ -16,8 +16,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  profilePicture: {
-    type: String, 
+  about: {
+    type: String,
+    length: 75,
+    default: 'We Love Fitness Tracker.'
+  },
+  profileImage: {
+    type: String,
+    default: 'default-profile-pic.jpg'
+  },
+  backgroundImage: {
+    type: String,
     default: 'default-profile-pic.jpg'
   },
   createdAt: {
