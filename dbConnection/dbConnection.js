@@ -9,4 +9,5 @@ const { connect } = require("mongoose");
     }
 }
 
+
 export default connectDb;
