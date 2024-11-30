@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const workoutSchema = new mongoose.Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -10,15 +10,14 @@ const workoutSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  exercises: [
-    {
-      exerciseName: String,
-      sets: Number,
-      reps: Number,
-      weight: Number, 
-      notes: String,
-    }
-  ],
+  exercises:
+  {
+    exerciseName: String,
+    sets: Number,
+    reps: Number,
+    weight: Number,
+    notes: String,
+  },
   category: {
     type: String,
     enum: ['strength', 'cardio', 'flexibility', 'endurance'],

@@ -1,6 +1,6 @@
 import User from '../Models/UserModel.js';
 import jwt from "jsonwebtoken";
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { upload } from "../Middlewares/imageMiddleWare.js";
 
 export const getUsers = async (req, res) => {
@@ -22,6 +22,7 @@ export const createUser = async (req, res) => {
             if (!req.file) {
                 return res.status(400).json({ msg: 'no file selected!' });
             }
+            console.log(req.body);
             const { username, email, password: plainTextPassword, about } = req.body;
             const findUserByUsername = await User.findOne({ username })
             const findUserByEmail = await User.findOne({ email })
@@ -32,6 +33,7 @@ export const createUser = async (req, res) => {
                 res.json({ msg: 'email already exist.' })
             }
             const password = await bcrypt.hash(plainTextPassword, 10);
+            const isPasswordCorrect = await bcrypt.compare(plainTextPassword, password)
             const profileImage = req.file.path;
             const backgroundImage = req.file.path;
             const results = new User({
@@ -50,22 +52,22 @@ export const createUser = async (req, res) => {
     }
 };
 
-//sign in
+// login
 export const loginUser = async (req, res) => {
     try {
         let { username, password } = req.body;
         const user = await User.findOne({ username });
 
         if (!user) {
-            return res.status(401).json({ msg: "invalid credentials" });
+            return res.status(401).json({ msg: "invalid credentials." });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ msg: "invalid credentials" });
+            return res.status(401).json({ msg: "invalid credentials." });
         }
         const token = jwt.sign(
-            { user: { username: user.username, } },
+            { user: { id: user._id, username: user.username, } },
             "fitness_tracker",
             // { expiresIn: '1h' }
         );
@@ -74,7 +76,6 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ msg: 'internal server error.' });
     }
 };
-
 export const updateUser = async (req, res) => {
     try {
         upload(req, res, async (err) => {
@@ -89,7 +90,7 @@ export const updateUser = async (req, res) => {
             const backgroundImage = req.file.path;
             const results = await User.findByIdAndUpdate(
                 req.params.id,
-                { username, email, bio, profileImage,backgroundImage },
+                { username, email, bio, profileImage, backgroundImage },
                 { new: true, runValidators: true }
             );
             if (!results) {
