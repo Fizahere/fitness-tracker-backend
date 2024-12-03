@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const nutritionSchema = new mongoose.Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -11,16 +11,14 @@ const nutritionSchema = new mongoose.Schema({
     enum: ['breakfast', 'lunch', 'dinner', 'snack'],
     required: true
   },
-  foodItems: [
-    {
-      foodName: String,
-      quantity: String, 
-      calories: Number,
-      protein: Number, 
-      carbs: Number,
-      fats: Number
-    }
-  ],
+  foodItems: {
+    foodName: { type: String, required: true },
+    quantity: { type: String, required: true },
+    calories: { type: String, required: true },
+    protein: { type: String, required: true },
+    carbs: { type: String, required: true },
+    fats: { type: String, required: true }
+  },
   createdAt: {
     type: Date,
     default: Date.now

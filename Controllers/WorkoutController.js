@@ -35,10 +35,10 @@ export const updateWorkout = async (req, res) => {
         if (!workoutId) {
             return res.status(404).json({ msg: 'Workout ID is missing.' });
         }
-        const { userId, title,exercises,category } = req.body;
-        const editedWorkout = await Posts.findByIdAndUpdate(
+        const { userId, title, exercises, category } = req.body;
+        const editedWorkout = await Workout.findByIdAndUpdate(
             workoutId,
-            {  userId, title,exercises,category },
+            { userId, title, exercises, category },
             { new: true, runValidators: true }
         );
 
@@ -50,5 +50,50 @@ export const updateWorkout = async (req, res) => {
 
     } catch (error) {
         return res.status(500).json({ msg: 'Internal server error.' });
+    }
+};
+
+export const deleteWorkout = async (req, res) => {
+    try {
+        const results = await Workout.findByIdAndDelete(req.params.id)
+        if (!results) {
+            res.status(404).json({ msg: 'Workout not found.' })
+        }
+        res.status(200).json({ msg: 'Workout deleted.' })
+    } catch (error) {
+        res.status(500).json({ msg: 'internal server error.' })
+    }
+}
+
+const escapeRegex = (text) => {
+    return text.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+};
+
+export const searchWorkout = async (req, res) => {
+    try {
+        const searchQuery = req.params.searchQuery;
+
+        if (!searchQuery) {
+            return res.status(400).json({ msg: "Search term is required." });
+        }
+
+        const sanitizedSearchTerm = escapeRegex(searchQuery);
+
+        const result = await Workout.find({
+            "$or": [
+                { "title": { $regex: sanitizedSearchTerm, $options: 'i' } },
+                { "category": { $regex: sanitizedSearchTerm, $options: 'i' } }
+            ]
+        });
+
+        if (result.length === 0) {
+            return res.status(404).json({ msg: "User not found." });
+        }
+
+        return res.status(200).json(result);
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: "Internal server error." });
     }
 };

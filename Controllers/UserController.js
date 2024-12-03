@@ -115,23 +115,35 @@ export const deleteUser = async (req, res) => {
     }
 };
 
+const escapeRegex = (text) => {
+    return text.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+};
+
 export const searchUsers = async (req, res) => {
     try {
         const searchedValue = req.params.searchterm;
+
         if (!searchedValue) {
-            return res.status(400).json({ msg: "search term is required." });
+            return res.status(400).json({ msg: "Search term is required." });
         }
+
+        const sanitizedSearchTerm = escapeRegex(searchedValue);
+
         const result = await User.find({
             "$or": [
-                { "content": { $regex: searchedValue, $options: 'i' } }
+                { "username": { $regex: sanitizedSearchTerm, $options: 'i' } },
+                { "category": { $regex: sanitizedSearchTerm, $options: 'i' } }
             ]
         });
+
         if (result.length === 0) {
-            return res.status(404).json({ msg: "user not found." });
+            return res.status(404).json({ msg: "User not found." });
         }
+
         return res.status(200).json(result);
+
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ msg: "internal server error.", error: error.message });
+        return res.status(500).json({ msg: "Internal server error." });
     }
 };
