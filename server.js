@@ -17,7 +17,7 @@ connectDb();
 app.use(express.json());
 
 // CORS configuration
-const allowedOrigins = ['http://localhost:2000', 'http://localhost:5173'];
+const allowedOrigins = ['https://fitness-tracker-backend-1-vqav.onrender.com', 'http://localhost:5173'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
