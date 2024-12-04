@@ -5,7 +5,7 @@ import {
     getWorkouts,
     searchWorkout,
     updateWorkout
-} from "../controllers/WorkoutController.js";
+} from "../Controllers/WorkoutController.js";
 
 const workoutRouter = Router()
 
