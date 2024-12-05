@@ -23,11 +23,11 @@ const userSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    default: 'default-profile-pic.jpg'
+    default:'../files/userImage.png'
   },
   backgroundImage: {
     type: String,
-    default: 'default-profile-pic.jpg'
+    default: '../files/mainImage.jpg'
   },
   createdAt: {
     type: Date,

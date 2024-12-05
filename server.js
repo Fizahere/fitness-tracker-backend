@@ -10,13 +10,10 @@ dotenv.config();
 const app = express();
 const port = 2000;
 
-// Connect to the database
 connectDb();
 
-// Middleware to parse JSON
 app.use(express.json());
 
-// CORS configuration
 const allowedOrigins = ['https://fitness-tracker-backend-1-vqav.onrender.com', 'http://localhost:5173'];
 app.use(cors({
     origin: (origin, callback) => {
@@ -27,20 +24,17 @@ app.use(cors({
             callback(new Error('Not allowed by CORS'));
         }
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-    credentials: true, // Enable cookies if needed
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    allowedHeaders: ['Content-Type', 'Authorization'], 
+    credentials: true, 
 }));
 
-// Handle preflight requests
 app.options('*', cors());
 
-// Routes
 app.use('/auth', authRoutes);
 app.use('/workout', workoutRouter);
 app.use('/nutrition', nutritionRouter);
 
-// Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

@@ -15,42 +15,36 @@ export const getUsers = async (req, res) => {
 //sipn up & create user
 export const createUser = async (req, res) => {
     try {
-        upload(req, res, async (err) => {
-            if (err) {
-                return res.status(400).json({ msg: err.message });
-            }
-            if (!req.file) {
-                return res.status(400).json({ msg: 'no file selected!' });
-            }
-            console.log(req.body);
-            const { username, email, password: plainTextPassword, about } = req.body;
-            const findUserByUsername = await User.findOne({ username })
-            const findUserByEmail = await User.findOne({ email })
-            if (findUserByUsername) {
-                res.json({ msg: 'username already exist.' })
-            }
-            if (findUserByEmail) {
-                res.json({ msg: 'email already exist.' })
-            }
-            const password = await bcrypt.hash(plainTextPassword, 10);
-            const isPasswordCorrect = await bcrypt.compare(plainTextPassword, password)
-            const profileImage = req.file.path;
-            const backgroundImage = req.file.path;
-            const results = new User({
-                username,
-                email,
-                password,
-                about,
-                profileImage,
-                backgroundImage,
-            });
-            await results.save();
-            return res.status(201).json({ msg: 'user created.', results });
+        const { username, email, password: plainTextPassword, about: bio } = req.body;
+        const findUserByUsername = await User.findOne({ username });
+        const findUserByEmail = await User.findOne({ email });
+        if (findUserByUsername) {
+            return res.status(400).json({ msg: "Username already exists." });
+        }
+        if (findUserByEmail) {
+            return res.status(400).json({ msg: "Email already exists." });
+        }
+        const password = await bcrypt.hash(plainTextPassword, 10);
+        const profileImage = req.file?.path || undefined;
+        const backgroundImage = req.file?.path || undefined;
+        const about = bio || undefined
+        const user = new User({
+            username,
+            email,
+            password,
+            about,
+            profileImage,
+            backgroundImage,
         });
+
+        await user.save();
+
+        return res.status(201).json({ msg: "User created successfully.", user });
     } catch (error) {
-        return res.status(500).json({ msg: 'internal server error.', error: error.message });
+        return res.status(500).json({ msg: "Internal server error.", error: error.message });
     }
 };
+
 
 // login
 export const loginUser = async (req, res) => {
