@@ -6,13 +6,14 @@ import {
     searchWorkout,
     updateWorkout
 } from "../Controllers/WorkoutController.js";
+import { authenticateToken } from '../Middlewares/authMiddleWare.js'
 
 const workoutRouter = Router()
 
-workoutRouter.get('/get-workouts', getWorkouts);
-workoutRouter.get('/search-workout/:searchQuery', searchWorkout);
+workoutRouter.get('/get-workouts', authenticateToken, getWorkouts);
+workoutRouter.get('/search-workout/:searchQuery', authenticateToken, searchWorkout);
 workoutRouter.post('/add-workout', addWorkout);
-workoutRouter.put('/update-workout/:id', updateWorkout);
-workoutRouter.delete('/delete-workout/:id', deleteWorkout)
+workoutRouter.put('/update-workout/:id', authenticateToken, updateWorkout);
+workoutRouter.delete('/delete-workout/:id', authenticateToken, deleteWorkout);
 
 export default workoutRouter;
