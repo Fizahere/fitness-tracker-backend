@@ -1,12 +1,25 @@
 import Workout from "../Models/WorkoutModel.js"
 
+// export const getWorkouts = async (req, res) => {
+//     try {
+//         const results = await Workout.find()
+//         res.status(200).json({ results })
+//     } catch (error) {
+//         res.status(500).json({ msg: 'internal server error.' })
+//     }
+// }
 export const getWorkouts = async (req, res) => {
     try {
         const userId = req.user.id;
         const results = await Workout.find({ userId });
+        
+        if (!results.length) {
+            return res.status(404).json({ msg: 'No workouts found for this user.' });
+        }
+        
         res.status(200).json({ results });
     } catch (error) {
-        res.status(500).json({ msg: 'Internal server error.' });
+        res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
 };
 
