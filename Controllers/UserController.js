@@ -24,6 +24,7 @@ export const createUser = async (req, res) => {
         if (findUserByEmail) {
             return res.status(400).json({ msg: "Email already exists." });
         }
+        
         const password = await bcrypt.hash(plainTextPassword, 10);
         const profileImage = req.file?.path || undefined;
         const backgroundImage = req.file?.path || undefined;
