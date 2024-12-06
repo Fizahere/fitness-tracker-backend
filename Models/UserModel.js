@@ -35,6 +35,9 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+const User = mongoose.model('User', userSchema);
+export default User;
+
 // userSchema.pre('save', async function (next) {
 //   if (!this.isModified('password')) return next();
 
@@ -47,5 +50,3 @@ const userSchema = new mongoose.Schema({
 //   return await bcrypt.compare(password, this.password);
 // };
 
-const User = mongoose.model('User', userSchema);
-export default User;
