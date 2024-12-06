@@ -12,7 +12,7 @@ const workoutRouter = Router()
 
 workoutRouter.get('/get-workouts', authenticateToken, getWorkouts);
 workoutRouter.get('/search-workout/:searchQuery', authenticateToken, searchWorkout);
-workoutRouter.post('/add-workout', addWorkout);
+workoutRouter.post('/add-workout',authenticateToken, addWorkout);
 workoutRouter.put('/update-workout/:id', authenticateToken, updateWorkout);
 workoutRouter.delete('/delete-workout/:id', authenticateToken, deleteWorkout);
 

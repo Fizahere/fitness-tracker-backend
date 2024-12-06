@@ -1,13 +1,27 @@
 import Nutrition from "../Models/NutrionModel.js"
 
+// export const getNutritions = async (req, res) => {
+//     try {
+//         const results = await Nutrition.find();
+//         res.status(200).json({ results })
+//     } catch (error) {
+//         res.status(500).json({ msg: 'internal server error.' })
+//     }
+// }
+
 export const getNutritions = async (req, res) => {
     try {
-        const results = await Nutrition.find();
-        res.status(200).json({ results })
+        const userId = req.user.id;
+        const results = await Nutrition.find({ userId });
+        
+        if (!results.length) {
+            return res.status(404).json({ msg: 'No Nutrition found for this user.' });
+        }
+        res.status(200).json({ results });
     } catch (error) {
-        res.status(500).json({ msg: 'internal server error.' })
+        res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
-}
+};
 export const addNutritions = async (req, res) => {
     try {
         const { userId, mealType, foodItems } = req.body;
