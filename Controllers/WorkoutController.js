@@ -1,13 +1,5 @@
 import Workout from "../Models/WorkoutModel.js"
 
-// export const getWorkouts = async (req, res) => {
-//     try {
-//         const results = await Workout.find()
-//         res.status(200).json({ results })
-//     } catch (error) {
-//         res.status(500).json({ msg: 'internal server error.' })
-//     }
-// }
 export const getWorkouts = async (req, res) => {
     try {
         const userId = req.user.id;

@@ -1,14 +1,5 @@
 import Nutrition from "../Models/NutrionModel.js"
 
-// export const getNutritions = async (req, res) => {
-//     try {
-//         const results = await Nutrition.find();
-//         res.status(200).json({ results })
-//     } catch (error) {
-//         res.status(500).json({ msg: 'internal server error.' })
-//     }
-// }
-
 export const getNutritions = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -22,44 +13,15 @@ export const getNutritions = async (req, res) => {
         res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
 };
-// export const addNutritions = async (req, res) => {
-//     try {
-//         const { userId, mealType, foodItems } = req.body;
-//         if (!userId || !mealType || !foodItems) {
-//             return res.status(400).json({ msg: 'Fields are missing.' });
-//         }
-//         const { foodName, quantity, calories, protein, carbs, fats } = foodItems;
-//         if (!foodName || !quantity || !calories || !protein || !carbs || !fats) {
-//             return res.status(400).json({ msg: 'Invalid foodItems data, missing required fields' });
-//         }
-//         const newNutrition = new Nutrition({
-//             userId,
-//             mealType,
-//             foodItems
-//         });
-//         await newNutrition.save();
-//         res.status(201).json({ msg: 'Nutrition added successfully.', newNutrition });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ msg: 'Internal server error.' });
-//     }
-// };
-
 export const addNutritions = async (req, res) => {
     try {
-        console.log('Received payload:', req.body);
-
         const { userId, mealType, foodItems } = req.body;
-
         if (!userId || !mealType || !foodItems) {
             return res.status(400).json({ msg: 'Fields are missing.' });
         }
         const { foodName, quantity, calories, protein, carbs, fats } = foodItems;
         if (!foodName || !quantity || !calories || !protein || !carbs || !fats) {
             return res.status(400).json({ msg: 'Invalid foodItems data, missing required fields' });
-        }
-        if (isNaN(quantity) || isNaN(calories) || isNaN(protein) || isNaN(carbs) || isNaN(fats)) {
-            return res.status(400).json({ msg: 'Invalid data types in foodItems' });
         }
         const newNutrition = new Nutrition({
             userId,
@@ -69,8 +31,7 @@ export const addNutritions = async (req, res) => {
         await newNutrition.save();
         res.status(201).json({ msg: 'Nutrition added successfully.', newNutrition });
     } catch (error) {
-        console.error('Error while saving nutrition:', error);
-
+        console.error(error);
         res.status(500).json({ msg: 'Internal server error.' });
     }
 };
