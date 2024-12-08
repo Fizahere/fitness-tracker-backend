@@ -18,7 +18,7 @@ export const getWorkoutById=async(req,res)=>{
     try {
         const workoutId=req.params.id;
         const results=await Workout.findById(workoutId)
-        console.log(results)
+       return res.status(200).json({results})
     } catch (error) {
         res.status(500).json({msg:'internal server error.'})
     }
