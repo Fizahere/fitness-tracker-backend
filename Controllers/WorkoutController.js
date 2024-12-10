@@ -2,8 +2,7 @@ import Workout from "../Models/WorkoutModel.js"
 
 export const getAllWorkouts = async (req, res) => {
     try {
-        const results = await Workout.find();
-        
+        const results = await Workout.find().populate({ path:'User',select:'username profileImage'});
         if (!results.length) {
             return res.status(404).json({ msg: 'No workouts found.' });
         }
