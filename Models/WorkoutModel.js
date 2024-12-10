@@ -23,6 +23,15 @@ const workoutSchema = new mongoose.Schema({
     enum: ['strength', 'cardio', 'flexibility', 'endurance'],
     required: true
   },
+  // likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  // comments: [
+  //     {
+  //         _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+  //         author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  //         content: { type: String, required: true },
+  //         createdAt: { type: Date, default: Date.now }
+  //     }
+  // ],
   createdAt: {
     type: Date,
     default: Date.now

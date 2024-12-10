@@ -22,3 +22,13 @@ const notificationSchema = new mongoose.Schema({
 
 const Notification = mongoose.model('Notification', notificationSchema);
 export default Notification;
+
+// likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
+// comments: [
+//     {
+//         _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
+//         author: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
+//         content: { type: String, required: true },
+//         createdAt: { type: Date, default: Date.now }
+//     }
+// ],

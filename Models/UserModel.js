@@ -29,6 +29,20 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '../files/mainImage.jpg'
   },
+  followers: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
+],
+following: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
+],
+notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
+
   createdAt: {
     type: Date,
     default: Date.now
