@@ -28,7 +28,15 @@ export const getWorkouts = async (req, res) => {
         res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
 };
-
+export const getWorkoutById=async(req,res)=>{
+    try {
+        const workoutId=req.params.id;
+        const results=await Workout.findById(workoutId)
+       return res.status(200).json({results})
+    } catch (error) {
+        res.status(500).json({msg:'internal server error.'})
+    }
+}
 export const addWorkout = async (req, res) => {
     try {
         const { userId, title, exercises, category } = req.body;

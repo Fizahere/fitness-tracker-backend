@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
     addWorkout,
     deleteWorkout,
+    getWorkoutById,
     getAllWorkouts,
     getWorkouts,
     searchWorkout,
@@ -13,6 +14,7 @@ const workoutRouter = Router()
 
 workoutRouter.get('/get-all-workouts', getAllWorkouts);
 workoutRouter.get('/get-workouts', authenticateToken, getWorkouts);
+workoutRouter.get('/get-workout/:id', getWorkoutById);
 workoutRouter.get('/search-workout/:searchQuery', authenticateToken, searchWorkout);
 workoutRouter.post('/add-workout',authenticateToken, addWorkout);
 workoutRouter.put('/update-workout/:id', authenticateToken, updateWorkout);

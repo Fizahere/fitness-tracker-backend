@@ -4,7 +4,7 @@ export const getNutritions = async (req, res) => {
     try {
         const userId = req.user.id;
         const results = await Nutrition.find({ userId });
-        
+
         if (!results.length) {
             return res.status(404).json({ msg: 'No Nutrition found for this user.' });
         }
@@ -13,6 +13,15 @@ export const getNutritions = async (req, res) => {
         res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
 };
+export const getNutritionById = async (req, res) => {
+    try {
+        const nutritionId = req.params.id;
+        const results = await Nutrition.findById(nutritionId)
+        return res.status(200).json({ results })
+    } catch (error) {
+        res.status(500).json({ msg: 'internal server error.' })
+    }
+}
 export const addNutritions = async (req, res) => {
     try {
         const { userId, mealType, foodItems } = req.body;
@@ -45,7 +54,7 @@ export const updateNutritions = async (req, res) => {
         const { userId, mealType, foodItems } = req.body;
         const editedNutrition = await Nutrition.findByIdAndUpdate(
             nutritionId,
-            {  userId, mealType, foodItems },
+            { userId, mealType, foodItems },
             { new: true, runValidators: true }
         );
 
