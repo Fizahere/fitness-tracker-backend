@@ -13,6 +13,7 @@ const port = 2000;
 connectDb();
 
 app.use(express.json());
+app.use('/files', express.static('files'));
 
 const allowedOrigins = ['https://fitness-tracker-backend-1-vqav.onrender.com', 'http://localhost:5173'];
 app.use(cors({
