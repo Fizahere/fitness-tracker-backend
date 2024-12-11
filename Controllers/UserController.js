@@ -2,6 +2,7 @@ import User from '../Models/UserModel.js';
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcryptjs'
 import { upload } from "../Middlewares/imageMiddleWare.js";
+import mongoose from 'mongoose';
 
 export const getUsers = async (req, res) => {
     try {
@@ -151,35 +152,45 @@ export const followUser = async (req, res) => {
         const userId = req.user?.id;
 
         if (!userId) {
-            return res.status(401).json({ msg: 'user id is missing.' });
+            return res.status(401).json({ msg: 'User ID is missing.' });
         }
 
-        if (userId === targetUserId) {
-            return res.status(400).json({ msg: 'ypu cannot follow yourself.' });
+        if (!targetUserId || targetUserId.trim() === "") {
+            return res.status(400).json({ msg: 'Target User ID is invalid.' });
         }
 
-        const userToFollow = await User.findById(targetUserId);
+        const trimmedTargetUserId = targetUserId.trim();
+
+        if (!mongoose.Types.ObjectId.isValid(trimmedTargetUserId)) {
+            return res.status(400).json({ msg: 'Invalid target user ID format.' });
+        }
+
+        if (userId === trimmedTargetUserId) {
+            return res.status(400).json({ msg: 'You cannot follow yourself.' });
+        }
+
+        const userToFollow = await User.findById(trimmedTargetUserId);
         const user = await User.findById(userId);
 
         if (!userToFollow) {
-            return res.status(404).json({ msg: 'user to follow not found.' });
+            return res.status(404).json({ msg: 'User to follow not found.' });
         }
 
         if (!user) {
-            return res.status(404).json({ msg: 'user not found.' });
+            return res.status(404).json({ msg: 'User not found.' });
         }
 
         if (userToFollow.followers.includes(userId)) {
-            return res.status(400).json({ msg: 'you are already following.' });
+            return res.status(400).json({ msg: 'You are already following.' });
         }
 
         userToFollow.followers.push(userId);
-        user.following.push(targetUserId);
+        user.following.push(trimmedTargetUserId);
 
         await userToFollow.save();
         await user.save();
 
-        return res.status(200).json({ msg: `you are now following ${userToFollow.username}` });
+        return res.status(200).json({ msg: `You are now following ${userToFollow.username}` });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
