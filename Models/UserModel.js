@@ -29,12 +29,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '../files/mainImage.jpg'
   },
-  followers: [
+  followers: 
     {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
-],
+,
 following: [
     {
         type: mongoose.Schema.Types.ObjectId,
