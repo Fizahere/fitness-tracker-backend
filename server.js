@@ -5,6 +5,7 @@ import workoutRouter from './routes/workoutRoutes.js';
 import nutritionRouter from './routes/nutritionRoutes.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import postRoutes from './routes/postRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -35,6 +36,7 @@ app.options('*', cors());
 app.use('/auth', authRoutes);
 app.use('/workout', workoutRouter);
 app.use('/nutrition', nutritionRouter);
+app.use('/post', postRoutes);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

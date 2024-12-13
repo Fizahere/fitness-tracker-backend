@@ -1,5 +1,5 @@
-import { upload } from "../Middlewares/imageMiddleWare";
-import Posts from "../Models/PostModel";
+import Posts from '../Models/PostModel.js'
+import { upload } from '../Middlewares/imageMiddleWare.js';
 
 export const getPosts = async (req, res) => {
     try {

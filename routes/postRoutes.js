@@ -22,7 +22,7 @@ postRoutes.get('/get-post/:id', getPostById);
 postRoutes.get('/search-post/:searchterm', searchPosts)
 postRoutes.get('/get-notifications/', authenticateToken, getNotifications);
 postRoutes.post('/mark-as-read', authenticateToken, markNotificationAsRead)
-postRoutes.post('/create-post', authenticateToken, createPost);
+postRoutes.post('/create-post', createPost);
 postRoutes.post('/like-post', authenticateToken, likePost);
 postRoutes.post('/dislike-post', authenticateToken, disLikePost);
 postRoutes.post('/comment', authenticateToken, comment);
