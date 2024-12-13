@@ -23,25 +23,26 @@ const userSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    default:'../files/userImage.png'
+    default: '../files/userImage.png'
   },
   backgroundImage: {
     type: String,
     default: '../files/mainImage.jpg'
   },
-  followers: 
+  followers: [
     {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     }
-,
-following: [
+  ]
+  ,
+  following: [
     {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     }
-],
-notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
+  ],
+  notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
 
   createdAt: {
     type: Date,
