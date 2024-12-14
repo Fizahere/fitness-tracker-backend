@@ -1,5 +1,6 @@
 import Posts from '../Models/PostModel.js'
 import { upload } from '../Middlewares/imageMiddleWare.js';
+import multer from 'multer';
 
 export const getPosts = async (req, res) => {
     try {
