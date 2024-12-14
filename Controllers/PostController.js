@@ -4,7 +4,7 @@ import multer from 'multer';
 
 export const getAllPosts = async (req, res) => {
     try {
-        const results = await Posts.find().populate({ path:'userId',select:'username profileImage followers'});
+        const results = await Posts.find().populate({ path:'author',select:'username profileImage followers'});
         res.status(200).json({ results });
     } catch (error) {
         res.status(500).json({ msg: 'internal server error.' })
