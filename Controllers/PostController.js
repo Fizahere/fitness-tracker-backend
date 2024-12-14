@@ -18,8 +18,8 @@ export const getAllPosts = async (req, res) => {
 }
 export const getPosts = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const results = await Posts.find({ userId }).populate({
+        const author = req.user.id;
+        const results = await Posts.find({ author }).populate({
             path: 'author',
             select: 'username profileImage'
         }).populate({
