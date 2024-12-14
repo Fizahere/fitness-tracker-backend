@@ -5,7 +5,7 @@ import {
     deleteComment,
     deletePost,
     disLikePost,
-    getAllPosts,
+    // getAllPosts,
     getNotifications,
     getPostById,
     getPosts,
@@ -18,7 +18,7 @@ import { authenticateToken } from "../Middlewares/authMiddleWare.js";
 
 const postRoutes = Router()
 
-postRoutes.get('/get-all-posts', getAllPosts);
+// postRoutes.get('/get-all-posts', getAllPosts);
 postRoutes.get('/get-posts', getPosts);
 postRoutes.get('/get-post/:id', getPostById);
 postRoutes.get('/search-post/:searchterm', searchPosts)

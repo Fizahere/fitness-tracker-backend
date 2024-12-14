@@ -2,24 +2,10 @@ import Posts from '../Models/PostModel.js'
 import { upload } from '../Middlewares/imageMiddleWare.js';
 import multer from 'multer';
 
-export const getAllPosts = async (req, res) => {
-    try {
-        const results = await Posts.find().populate({
-            path: 'author',
-            select: 'username profileImage'
-        }).populate({
-            path: 'likes',
-            select: 'username profileImage'
-        });
-        return res.json({ results });
-    } catch (error) {
-        return res.status(500).json({ msg: 'internl server error.' }, error.message);
-    }
-}
 export const getPosts = async (req, res) => {
     try {
-        const author = req.user.id;
-        const results = await Posts.find({ author }).populate({
+        const author=req?.user?.id;
+        const results = await Posts.find({author}).populate({
             path: 'author',
             select: 'username profileImage'
         }).populate({
