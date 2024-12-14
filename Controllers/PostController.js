@@ -2,9 +2,24 @@ import Posts from '../Models/PostModel.js'
 import { upload } from '../Middlewares/imageMiddleWare.js';
 import multer from 'multer';
 
-export const getPosts = async (req, res) => {
+export const getAllPosts = async (req, res) => {
     try {
         const results = await Posts.find().populate({
+            path: 'author',
+            select: 'username profileImage'
+        }).populate({
+            path: 'likes',
+            select: 'username profileImage'
+        });
+        return res.json({ results });
+    } catch (error) {
+        return res.status(500).json({ msg: 'internl server error.' }, error.message);
+    }
+}
+export const getPosts = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const results = await Posts.find({ userId }).populate({
             path: 'author',
             select: 'username profileImage'
         }).populate({
@@ -29,44 +44,22 @@ export const getPostById = async (req, res) => {
     }
 }
 
-// export const createPost = async (req, res) => {
-//     try {
-//         upload(req, res, async (err) => {
-//             if (err) {
-//                 return res.status(400).json({ msg: err.message });
-//             }
-//             if (!req.file) {
-//                 return res.status(400).json({ msg: 'no file selected!' });
-//             }
-//             const { author, content } = req.body;
-//             const image = req.file.path || undefined;
-//             const results = new Posts({
-//                 author,
-//                 content,
-//                 image,
-//             });
-//             await results.save();
-//             return res.status(201).json({ msg: 'posted.', results });
-//         });
-//     } catch (error) {
-//         return res.status(500).json({ msg: 'internal server error.', error: error.message });
-//     }
-// };
-// Create Post Controller
 export const createPost = async (req, res) => {
     try {
+        const { author, content } = req.body;
+        
         upload(req, res, async (err) => {
             if (err instanceof multer.MulterError) {
                 return res.status(400).json({ msg: err.message }); // Multer-specific error
             } else if (err) {
                 return res.status(400).json({ msg: err.message }); // Other errors
             }
-
             if (!req.file) {
                 return res.status(400).json({ msg: 'No file selected!' });
             }
 
             const { author, content } = req.body;
+            console.log(author,content)
             const image = req.file.path; // Saved file path
 
             const results = new Posts({
