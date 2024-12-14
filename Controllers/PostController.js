@@ -28,27 +28,57 @@ export const getPostById = async (req, res) => {
     }
 }
 
+// export const createPost = async (req, res) => {
+//     try {
+//         upload(req, res, async (err) => {
+//             if (err) {
+//                 return res.status(400).json({ msg: err.message });
+//             }
+//             if (!req.file) {
+//                 return res.status(400).json({ msg: 'no file selected!' });
+//             }
+//             const { author, content } = req.body;
+//             const image = req.file.path || undefined;
+//             const results = new Posts({
+//                 author,
+//                 content,
+//                 image,
+//             });
+//             await results.save();
+//             return res.status(201).json({ msg: 'posted.', results });
+//         });
+//     } catch (error) {
+//         return res.status(500).json({ msg: 'internal server error.', error: error.message });
+//     }
+// };
+// Create Post Controller
 export const createPost = async (req, res) => {
     try {
         upload(req, res, async (err) => {
-            if (err) {
-                return res.status(400).json({ msg: err.message });
+            if (err instanceof multer.MulterError) {
+                return res.status(400).json({ msg: err.message }); // Multer-specific error
+            } else if (err) {
+                return res.status(400).json({ msg: err.message }); // Other errors
             }
+
             if (!req.file) {
-                return res.status(400).json({ msg: 'no file selected!' });
+                return res.status(400).json({ msg: 'No file selected!' });
             }
+
             const { author, content } = req.body;
-            const image = req.file.path || undefined;
+            const image = req.file.path; // Saved file path
+
             const results = new Posts({
                 author,
                 content,
                 image,
             });
+
             await results.save();
-            return res.status(201).json({ msg: 'posted.', results });
+            return res.status(201).json({ msg: 'Post created successfully.', results });
         });
     } catch (error) {
-        return res.status(500).json({ msg: 'internal server error.', error: error.message });
+        return res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
 };
 
