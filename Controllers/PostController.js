@@ -14,23 +14,19 @@ export const getPosts = async (req, res) => {
     try {
         const author = req?.user?.id;
 
-        // Ensure the author ID exists
         if (!author) {
             return res.status(400).json({ msg: 'User is not authenticated.' });
         }
 
-        // Fetch posts created by the logged-in user
         const results = await Posts.find({ author })
             .populate({
                 path: 'author',
-                select: 'username profileImage' // Select only relevant fields
+            select: 'username profileImage'
             })
             .populate({
                 path: 'likes',
-                select: 'username profileImage' // Populate likes with user details
+                select: 'username profileImage' 
             });
-
-        // Return results
         if (!results.length) {
             return res.status(404).json({ msg: 'No posts found for the user.' });
         }
