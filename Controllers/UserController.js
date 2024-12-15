@@ -4,9 +4,18 @@ import bcrypt from 'bcryptjs'
 import { upload } from "../Middlewares/imageMiddleWare.js";
 import mongoose from 'mongoose';
 
-export const getUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
         const results = await User.find();
+        return res.status(200).json({ results });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+};
+export const getUser = async (req, res) => {
+    try {
+        const userId=req?.user?.id;
+        const results = await User.findOne(userId);
         return res.status(200).json({ results });
     } catch (error) {
         return res.status(500).json({ error: error.message });

@@ -3,9 +3,10 @@ import {
     createUser,
     deleteUser,
     followUser,
+    getAllUsers,
     getFollowers,
     getFollowing,
-    getUsers,
+    getUser,
     loginUser,
     searchUsers,
     unfollowUser,
@@ -15,7 +16,8 @@ import { authenticateToken } from "../Middlewares/authMiddleWare.js";
 
 const authRoutes = Router();
 
-authRoutes.get('/get-users', getUsers)
+authRoutes.get('/get-all-users', getAllUsers)
+authRoutes.get('/get-user', getUser)
 authRoutes.get('/search-user/:searchterm', searchUsers)
 authRoutes.post('/login', loginUser)
 authRoutes.post('/create-user', createUser)
