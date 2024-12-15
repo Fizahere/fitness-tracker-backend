@@ -6,6 +6,7 @@ import nutritionRouter from './routes/nutritionRoutes.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import postRoutes from './routes/postRoutes.js';
+import path from 'path';
 
 dotenv.config();
 const app = express();
@@ -14,7 +15,8 @@ const port = 2000;
 connectDb();
 
 app.use(express.json());
-app.use('./files', express.static('files'));
+// app.use('/files', express.static('files'));
+app.use('./files', express.static(path.join(files, 'files')));
 
 const allowedOrigins = ['https://fitness-tracker-backend-1-vqav.onrender.com', 'http://localhost:5173'];
 app.use(cors({
