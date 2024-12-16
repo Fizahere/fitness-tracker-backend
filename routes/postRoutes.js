@@ -21,7 +21,6 @@ postRoutes.get('/get-all-posts', getAllPosts);
 postRoutes.get('/get-posts',authenticateToken, getPosts);
 postRoutes.get('/get-post/:id', getPostById);
 postRoutes.get('/search-post/:searchterm', searchPosts)
-postRoutes.get('/get-notifications/', authenticateToken, getNotifications);
 postRoutes.post('/mark-as-read', authenticateToken, markNotificationAsRead)
 postRoutes.post('/create-post', createPost);
 postRoutes.post('/like-post', authenticateToken, likePost);
