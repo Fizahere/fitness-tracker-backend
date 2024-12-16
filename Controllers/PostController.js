@@ -1,6 +1,7 @@
 import Posts from '../Models/PostModel.js'
 import { upload } from '../Middlewares/imageMiddleWare.js';
 import multer from 'multer';
+import Notification from '../Models/NotificationModel.js';
 
 export const getAllPosts = async (req, res) => {
     try {
@@ -175,7 +176,7 @@ export const comment = async (req, res) => {
         }
 
         const newComment = {
-            author,  // User who is commenting
+            author,  
             content
         };
 
@@ -184,8 +185,8 @@ export const comment = async (req, res) => {
 
         if (postToCommentOn.author.toString() !== author.toString()) {
             await Notification.create({
-                user: postToCommentOn.author,  // Notify the post author
-                fromUser: author,  // The user who commented
+                user: postToCommentOn.author,  
+                fromUser: author,  
                 type: 'new_comment',
                 relatedPost: postId
             });
@@ -239,9 +240,9 @@ export const markNotificationAsRead = async (req, res) => {
 };
 
 export const getNotifications = async (req, res) => {
-    const { userId } = req.body;
+    const { userId } = req?.user.id;
     try {
-        const notifications = await Notification.find({ user: userId })
+        const notifications = await Notification.find({ toUser: userId })
             .populate('fromUser', 'username profileImage')
             .populate('relatedPost', 'content image')
             .sort({ createdAt: -1 });

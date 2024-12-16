@@ -6,7 +6,6 @@ import {
     deletePost,
     disLikePost,
     getAllPosts,
-    getNotifications,
     getPostById,
     getPosts,
     likePost,

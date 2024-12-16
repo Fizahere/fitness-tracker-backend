@@ -13,6 +13,7 @@ import {
     updateUser
 } from '../Controllers/UserController.js'
 import { authenticateToken } from "../Middlewares/authMiddleWare.js";
+import { getNotifications } from "../Controllers/PostController.js";
 
 const authRoutes = Router();
 
@@ -28,6 +29,8 @@ authRoutes.post('/follow/:targetUserId', authenticateToken, followUser);
 authRoutes.post('/unfollow/:targetUserId', authenticateToken, unfollowUser);
 authRoutes.get('/get-followers/:id', getFollowers);
 authRoutes.get('/get-following/:id', getFollowing);
+//notifications
+postRoutes.get('/get-notifications',authenticateToken, getNotifications);
 
 
 export default authRoutes

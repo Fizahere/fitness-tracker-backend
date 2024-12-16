@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from 'bcryptjs'
 import { upload } from "../Middlewares/imageMiddleWare.js";
 import mongoose from 'mongoose';
+import Notification from '../Models/NotificationModel.js';
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -14,9 +15,9 @@ export const getAllUsers = async (req, res) => {
 };
 export const getUser = async (req, res) => {
     try {
-        const userId=req?.user?.id;
+        const userId = req?.user?.id;
         const results = await User.findById(userId);
-        return res.status(200).json({'results': results });
+        return res.status(200).json({ 'results': results });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
@@ -34,7 +35,7 @@ export const createUser = async (req, res) => {
         if (findUserByEmail) {
             return res.status(400).json({ msg: "Email already exists." });
         }
-        
+
         const password = await bcrypt.hash(plainTextPassword, 10);
         const profileImage = req.file?.path || undefined;
         const backgroundImage = req.file?.path || undefined;
@@ -198,6 +199,13 @@ export const followUser = async (req, res) => {
 
         await userToFollow.save();
         await user.save();
+
+        const sendNotification = new Notification({
+            fromUser:userId,
+            toUser:targetUserId,
+            message: `${user.username} followed you.`,
+        })
+       await sendNotification.save();
 
         return res.status(200).json({ msg: `You are now following ${userToFollow.username}` });
     } catch (error) {
