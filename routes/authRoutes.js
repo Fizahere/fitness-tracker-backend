@@ -30,7 +30,7 @@ authRoutes.post('/unfollow/:targetUserId', authenticateToken, unfollowUser);
 authRoutes.get('/get-followers/:id', getFollowers);
 authRoutes.get('/get-following/:id', getFollowing);
 //notifications
-postRoutes.get('/get-notifications',authenticateToken, getNotifications);
+authRoutes.get('/get-notifications',authenticateToken, getNotifications);
 
 
 export default authRoutes
