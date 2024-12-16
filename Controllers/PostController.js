@@ -240,11 +240,11 @@ export const markNotificationAsRead = async (req, res) => {
 };
 
 export const getNotifications = async (req, res) => {
-    const { userId } = req?.user.id;
+    const userId = req.user?.id;
+    console.log(userId)
     try {
         const notifications = await Notification.find({ toUser: userId })
             .populate('fromUser', 'username profileImage')
-            .populate('relatedPost', 'content image')
             .sort({ createdAt: -1 });
         if (!notifications.length) {
             return res.status(404).json({ msg: 'no notifications found.' });
