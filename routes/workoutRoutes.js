@@ -6,7 +6,8 @@ import {
     getAllWorkouts,
     getWorkouts,
     searchWorkout,
-    updateWorkout
+    updateWorkout,
+    getCalories
 } from "../Controllers/WorkoutController.js";
 import { authenticateToken } from '../Middlewares/authMiddleWare.js'
 
@@ -16,6 +17,7 @@ workoutRouter.get('/get-all-workouts', getAllWorkouts);
 workoutRouter.get('/get-workouts', authenticateToken, getWorkouts);
 workoutRouter.get('/get-workout/:id', getWorkoutById);
 workoutRouter.get('/search-workout/:searchQuery', searchWorkout);
+workoutRouter.get('/get-calories',authenticateToken, getCalories);
 workoutRouter.post('/add-workout', addWorkout);
 workoutRouter.put('/update-workout/:id', updateWorkout);
 workoutRouter.delete('/delete-workout/:id', deleteWorkout);

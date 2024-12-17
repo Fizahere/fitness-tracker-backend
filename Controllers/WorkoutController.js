@@ -2,11 +2,11 @@ import Workout from "../Models/WorkoutModel.js"
 
 export const getAllWorkouts = async (req, res) => {
     try {
-        const results = await Workout.find().populate({ path:'userId',select:'username profileImage followers'});
+        const results = await Workout.find().populate({ path: 'userId', select: 'username profileImage followers' });
         if (!results.length) {
             return res.status(404).json({ msg: 'No workouts found.' });
         }
-        
+
         res.status(200).json({ results });
     } catch (error) {
         res.status(500).json({ msg: 'Internal server error.', error: error.message });
@@ -17,23 +17,37 @@ export const getWorkouts = async (req, res) => {
     try {
         const userId = req.user.id;
         const results = await Workout.find({ userId });
-        
+
         if (!results.length) {
             return res.status(404).json({ msg: 'No workouts found for this user.' });
         }
-        
+
         res.status(200).json({ results });
     } catch (error) {
         res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
 };
-export const getWorkoutById=async(req,res)=>{
+export const getCalories = async (req, res) => {
     try {
-        const workoutId=req.params.id;
-        const results=await Workout.findById(workoutId)
-       return res.status(200).json({results})
+        const userId = req.user.id;
+        let workouts = await Workout.find({ userId })
+        let results = workouts.map(({ exercises }) => {
+            const { sets = 0, reps = 0, weight = 0 } = exercises || {};
+            const caloriesBurn = sets * reps * weight;
+            return caloriesBurn;
+        });
+        return res.json({ results })
     } catch (error) {
-        res.status(500).json({msg:'internal server error.'})
+        res.status(500).json({ msg: 'Internal server error.', error: error.message });
+    }
+}
+export const getWorkoutById = async (req, res) => {
+    try {
+        const workoutId = req.params.id;
+        const results = await Workout.findById(workoutId)
+        return res.status(200).json({ results })
+    } catch (error) {
+        res.status(500).json({ msg: 'internal server error.' })
     }
 }
 export const addWorkout = async (req, res) => {
