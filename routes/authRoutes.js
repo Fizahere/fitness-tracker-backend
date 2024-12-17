@@ -7,6 +7,7 @@ import {
     getFollowers,
     getFollowing,
     getUser,
+    getUserStreaks,
     loginUser,
     searchUsers,
     unfollowUser,
@@ -31,6 +32,7 @@ authRoutes.get('/get-followers/:id', getFollowers);
 authRoutes.get('/get-following/:id', getFollowing);
 //notifications
 authRoutes.get('/get-notifications',authenticateToken, getNotifications);
+authRoutes.get('/get-streaks',authenticateToken, getUserStreaks);
 
 
 export default authRoutes

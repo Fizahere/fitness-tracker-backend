@@ -22,6 +22,25 @@ export const getUser = async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 };
+export const getUserStreaks = async (req, res) => {
+    try {
+      const userId = req.user.id;
+  
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ msg: 'User not found' });
+      }
+  
+      res.status(200).json({
+        currentStreak: user.currentStreak,
+        highestStreak: user.highestStreak,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: 'Internal server error.' });
+    }
+  };
+  
 
 //sipn up & create user
 export const createUser = async (req, res) => {
