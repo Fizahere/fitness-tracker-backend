@@ -34,7 +34,7 @@ export const getCalories = async (req, res) => {
         let results = workouts.map(({ exercises }) => {
             const { sets = 0, reps = 0, weight = 0 } = exercises || {};
             const caloriesBurn = sets * reps * weight;
-            return caloriesBurn;
+            return caloriesBurn.toFixed(2);
         });
         return res.json({ results })
     } catch (error) {
