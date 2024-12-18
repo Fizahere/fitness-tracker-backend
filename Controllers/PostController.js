@@ -53,8 +53,6 @@ export const getPostById = async (req, res) => {
 
 export const createPost = async (req, res) => {
     try {
-        const { author, content } = req.body;
-
         upload(req, res, async (err) => {
             if (err instanceof multer.MulterError) {
                 return res.status(400).json({ msg: err.message });

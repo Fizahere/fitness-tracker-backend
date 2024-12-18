@@ -1,18 +1,18 @@
-// // import multer from "multer";
+import multer from "multer";
 
-// // const storage = multer.diskStorage({
-// //     destination: (req, file, cb) => {
-// //         cb(null, './files'); 
-// //     },
-// //     filename: (req, file, cb) => {
-// //         cb(null, file.originalname); 
-// //     },
-// // });
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './files'); 
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname); 
+    },
+});
 
-// // export const upload = multer({
-// //     storage,
-// //     limits: { fileSize: 10 * 1024 * 1024 }, 
-// // }).single('file'); 
+export const upload = multer({
+    storage,
+    limits: { fileSize: 10 * 1024 * 1024 }, 
+}).single('file'); 
 
 // import multer from 'multer';
 // import fs from 'fs';
@@ -49,37 +49,3 @@
 //     limits: { fileSize: 10 * 1024 * 1024 }, 
 //     fileFilter,
 // }).single('file');
-
-import multer from 'multer';
-import fs from 'fs';
-
-// Ensure the directory exists
-if (!fs.existsSync('./files')) {
-    fs.mkdirSync('./files', { recursive: true });
-}
-
-// Configure Multer Storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './files'); // Save files in the 'files' directory
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname); // Use the original file name
-    },
-});
-
-// File filter to allow only images
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-        cb(null, true);
-    } else {
-        cb(new Error('Only image files are allowed!'), false);
-    }
-};
-
-// Multer configuration
-export const upload = multer({
-    storage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
-    fileFilter,
-}).single('file');
