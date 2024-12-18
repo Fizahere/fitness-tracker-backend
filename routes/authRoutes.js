@@ -7,6 +7,7 @@ import {
     getFollowers,
     getFollowing,
     getUser,
+    getUserById,
     loginUser,
     searchUsers,
     unfollowUser,
@@ -19,6 +20,7 @@ const authRoutes = Router();
 
 authRoutes.get('/get-all-users', getAllUsers)
 authRoutes.get('/get-user',authenticateToken, getUser)
+authRoutes.get('/get-user-by-id', getUserById)
 authRoutes.get('/search-user/:searchterm', searchUsers) //remaining
 authRoutes.post('/login', loginUser)
 authRoutes.post('/create-user', createUser)
