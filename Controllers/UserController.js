@@ -76,12 +76,12 @@ export const loginUser = async (req, res) => {
             "fitness_tracker",
             // { expiresIn: '1h' }
         );
+        res.json({ token, user: { username: user.username, } });
         const sendNotification = new Notification({
             toUser: targetUserId,
             message: `Welcome Back, ${user.username}.`,
         })
         await sendNotification.save();
-        res.json({ token, user: { username: user.username, } });
     } catch (error) {
         res.status(500).json({ msg: 'internal server error.' });
     }
