@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -33,17 +34,16 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     }
-  ],
+  ]
+  ,
   following: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     }
   ],
-  // notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
-  currentStreak: { type: Number, default: 0 }, // Current streak of consecutive workout days
-  highestStreak: { type: Number, default: 0 }, // Record of the longest streak
-  lastWorkoutDate: { type: Date, default: null }, // Last recorded workout date
+  notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
+
   createdAt: {
     type: Date,
     default: Date.now
@@ -52,3 +52,16 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 export default User;
+
+// userSchema.pre('save', async function (next) {
+//   if (!this.isModified('password')) return next();
+
+//   const salt = await bcrypt.genSalt(10);
+//   this.password = await bcrypt.hash(this.password, salt);
+//   next();
+// });
+
+// userSchema.methods.comparePassword = async function (password) {
+//   return await bcrypt.compare(password, this.password);
+// };
+

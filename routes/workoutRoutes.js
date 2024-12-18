@@ -7,7 +7,8 @@ import {
     getWorkouts,
     searchWorkout,
     updateWorkout,
-    getCalories
+    getCalories,
+    getUserWorkoutStreak
 } from "../Controllers/WorkoutController.js";
 import { authenticateToken } from '../Middlewares/authMiddleWare.js'
 
@@ -21,5 +22,6 @@ workoutRouter.get('/get-calories',authenticateToken, getCalories);
 workoutRouter.post('/add-workout', addWorkout);
 workoutRouter.put('/update-workout/:id', updateWorkout);
 workoutRouter.delete('/delete-workout/:id', deleteWorkout);
+workoutRouter.get('/get-streaks',authenticateToken,getUserWorkoutStreak)
 
 export default workoutRouter;

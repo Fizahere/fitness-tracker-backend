@@ -50,89 +50,75 @@ export const getWorkoutById = async (req, res) => {
         res.status(500).json({ msg: 'internal server error.' })
     }
 }
-// export const addWorkout = async (req, res) => {
-//     try {
-//         const { userId, title, exercises, category } = req.body;
-//         if (!userId || !title || !exercises || !category) {
-//             return res.status(400).json({ msg: 'field are empty.' })
-//         }
-//         const { exerciseName, sets, reps, weight, notes } = exercises;
-//         if (!exerciseName || !sets || !reps || !weight || !notes) {
-//             return res.status(400).json({ msg: 'Invalid exercise data' });
-//         }
-//         const newWrokout = new Workout({
-//             userId, title, exercises, category
-//         })
-//         await newWrokout.save();
-//         res.status(201).json({ msg: 'workout added.', newWrokout })
-//     } catch (error) {
-//         res.status(500).json({ msg: 'internal server error.' })
-//     }
-// }
-export const addWorkout = async (req, res) => {
+export const getUserWorkoutStreak = async (req, res) => {
     try {
-      const { userId, title, exercises, category } = req.body;
+      const userId = req.user.id;
   
-      if (!userId || !title || !exercises || !category) {
-        return res.status(400).json({ msg: 'Fields are empty.' });
+      const workouts = await Workout.find({ userId })
+        .sort({ createdAt: -1 })
+        .limit(6);
+  
+      if (workouts.length < 6) {
+        return res.status(200).json({ streak: false, msg: 'Not enough data for a 6-day streak.' });
       }
   
-      const { exerciseName, sets, reps, weight, notes } = exercises;
+      const uniqueDates = [
+        ...new Set(
+          workouts
+            .map(workout => workout.createdAt && new Date(workout.createdAt).setHours(0, 0, 0, 0))
+            .filter(date => !isNaN(date)) 
+        ),
+      ];
   
-      if (!exerciseName || !sets || !reps || !weight || !notes) {
-        return res.status(400).json({ msg: 'Invalid exercise data.' });
+      console.log('Unique Workout Dates (normalized):', uniqueDates);
+  
+      if (uniqueDates.length < 6) {
+        return res.status(200).json({ streak: false, msg: 'Not enough unique days for a 6-day streak.' });
       }
   
-      const newWorkout = new Workout({
-        userId,
-        title,
-        exercises,
-        category,
-      });
+      for (let i = 0; i < uniqueDates.length - 1; i++) {
+        const currentDate = uniqueDates[i];
+        const nextDate = uniqueDates[i + 1];
   
-      await newWorkout.save();
+        const differenceInDays = (currentDate - nextDate) / (24 * 60 * 60 * 1000);
+        console.log(`Difference between ${new Date(currentDate)} and ${new Date(nextDate)}:`, differenceInDays);
   
-      const user = await User.findById(userId);
-  
-      if (!user) {
-        return res.status(404).json({ msg: 'User not found.' });
-      }
-  
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Normalize to start of today
-      const lastWorkoutDate = user.lastWorkoutDate ? new Date(user.lastWorkoutDate) : null;
-  
-      if (!lastWorkoutDate) {
-        // First workout ever
-        user.currentStreak = 1;
-      } else {
-        const diffInDays = Math.floor((today - lastWorkoutDate) / (24 * 60 * 60 * 1000));
-  
-        if (diffInDays === 1) {
-          // Increment streak if last workout was yesterday
-          user.currentStreak += 1;
-        } else if (diffInDays > 1) {
-          // Reset streak if more than a day has passed
-          user.currentStreak = 1;
+        if (differenceInDays !== 1) {
+          return res.status(200).json({ streak: false, msg: 'Dates are not consecutive.' });
         }
       }
   
-      // Update the highest streak if the current streak is greater
-      if (user.currentStreak > user.highestStreak) {
-        user.highestStreak = user.currentStreak;
-      }
-  
-      // Update the last workout date
-      user.lastWorkoutDate = today;
-      await user.save();
-  
-      res.status(201).json({ msg: 'Workout added and streak updated.', newWorkout, user });
+      return res.status(200).json({ streak: true, msg: "Consider resting tomorrow; you've had 6 active days in a row!" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ msg: 'Internal server error.' });
+      return res.status(500).json({ streak: false, msg: 'Internal server error.' });
     }
   };
   
+export const addWorkout = async (req, res) => {
+    try {
+        const { userId, title, exercises, category } = req.body;
+        if (!userId || !title || !exercises || !category) {
+            return res.status(400).json({ msg: 'field are empty.' })
+        }
+        const { exerciseName, sets, reps, weight, notes } = exercises;
+        if (!exerciseName || !sets || !reps || !weight || !notes) {
+            return res.status(400).json({ msg: 'Invalid exercise data' });
+        }
+        const newWrokout = new Workout({
+            userId, title, exercises, category
+        })
+        await newWrokout.save();
+        const sendNotification = new Notification({
+            toUser:userId,
+            message: `Never expected less from ${user.username}, keep going.`,
+        })
+       await sendNotification.save();
+        res.status(201).json({ msg: 'workout added.', newWrokout })
+    } catch (error) {
+        res.status(500).json({ msg: 'internal server error.' })
+    }
+}
 
 export const updateWorkout = async (req, res) => {
     try {

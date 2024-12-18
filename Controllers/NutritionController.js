@@ -38,6 +38,11 @@ export const addNutritions = async (req, res) => {
             foodItems
         });
         await newNutrition.save();
+        const sendNotification = new Notification({
+            toUser:userId,
+            message: `When preparing your meal prefer adding more protiens.`,
+        })
+       await sendNotification.save();
         res.status(201).json({ msg: 'Nutrition added successfully.', newNutrition });
     } catch (error) {
         console.error(error);

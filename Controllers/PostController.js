@@ -133,15 +133,16 @@ export const deletePost = async (req, res) => {
 
 export const likePost = async (req, res) => {
     try {
-        const { postId, user } = req.body;
+        const userId= req.user.id;
+        const { postId } = req.body;
         if (!postId) {
             return res.json({ msg: 'post Id is missing.' })
         }
-        if (!user) {
+        if (!userId) {
             return res.json({ msg: 'user Id is missing.' })
         }
         const postToLike = await Posts.findById(postId)
-        postToLike.likes.push(user)
+        postToLike.likes.push(userId)
         await postToLike.save()
         return res.status(200).json({ msg: 'liked.' })
     } catch (error) {
@@ -151,15 +152,16 @@ export const likePost = async (req, res) => {
 
 export const disLikePost = async (req, res) => {
     try {
-        const { postId, user } = req.body;
+        const userId= req.user.id;
+        const { postId } = req.body;
         if (!postId) {
             return res.json({ msg: 'post Id is missing.' })
         }
-        if (!user) {
+        if (!userId) {
             return res.json({ msg: 'user Id is missing.' })
         }
         const postToDisLike = await Posts.findById(postId)
-        postToDisLike.likes = postToDisLike.likes.filter(like => like.toString() !== user.toString())
+        postToDisLike.likes = postToDisLike.likes.filter(like => like.toString() !== userId.toString())
         await postToDisLike.save()
         return res.status(200).json({ msg: 'disliked.' })
     } catch (error) {
