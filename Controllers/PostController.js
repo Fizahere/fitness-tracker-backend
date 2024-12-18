@@ -5,7 +5,7 @@ import Notification from '../Models/NotificationModel.js';
 
 export const getAllPosts = async (req, res) => {
     try {
-        const results = await Posts.find().populate({ path:'author',select:'username profileImage followers'});
+        const results = await Posts.find().populate({ path: 'author', select: 'username profileImage followers' });
         res.status(200).json({ results });
     } catch (error) {
         res.status(500).json({ msg: 'internal server error.' })
@@ -22,11 +22,11 @@ export const getPosts = async (req, res) => {
         const results = await Posts.find({ author })
             .populate({
                 path: 'author',
-            select: 'username profileImage'
+                select: 'username profileImage'
             })
             .populate({
                 path: 'likes',
-                select: 'username profileImage' 
+                select: 'username profileImage'
             });
         if (!results.length) {
             return res.status(404).json({ msg: 'No posts found for the user.' });
@@ -133,7 +133,7 @@ export const deletePost = async (req, res) => {
 
 export const likePost = async (req, res) => {
     try {
-        const userId= req.user.id;
+        const userId = req.user.id;
         const { postId } = req.body;
         if (!postId) {
             return res.json({ msg: 'post Id is missing.' })
@@ -152,7 +152,7 @@ export const likePost = async (req, res) => {
 
 export const disLikePost = async (req, res) => {
     try {
-        const userId= req.user.id;
+        const userId = req.user.id;
         const { postId } = req.body;
         if (!postId) {
             return res.json({ msg: 'post Id is missing.' })
@@ -171,14 +171,16 @@ export const disLikePost = async (req, res) => {
 
 export const comment = async (req, res) => {
     try {
-        const { postId, author, content } = req.body;
+        const author = req.user.id;
+        const postId=req.params.id;
+        const { content } = req.body;
         const postToCommentOn = await Posts.findById(postId);
         if (!postToCommentOn) {
             return res.status(404).json({ msg: 'post not found.' });
         }
 
         const newComment = {
-            author,  
+            author,
             content
         };
 
@@ -187,8 +189,8 @@ export const comment = async (req, res) => {
 
         if (postToCommentOn.author.toString() !== author.toString()) {
             await Notification.create({
-                user: postToCommentOn.author,  
-                fromUser: author,  
+                user: postToCommentOn.author,
+                fromUser: author,
                 type: 'new_comment',
                 relatedPost: postId
             });

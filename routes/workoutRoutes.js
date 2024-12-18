@@ -17,11 +17,11 @@ const workoutRouter = Router()
 workoutRouter.get('/get-all-workouts', getAllWorkouts);
 workoutRouter.get('/get-workouts', authenticateToken, getWorkouts);
 workoutRouter.get('/get-workout/:id', getWorkoutById);
-workoutRouter.get('/search-workout/:searchQuery', searchWorkout);
-workoutRouter.get('/get-calories',authenticateToken, getCalories);
+workoutRouter.get('/search-workout/:searchQuery', searchWorkout); //remaining
+workoutRouter.get('/get-calories', authenticateToken, getCalories); //remaining
 workoutRouter.post('/add-workout', addWorkout);
 workoutRouter.put('/update-workout/:id', updateWorkout);
 workoutRouter.delete('/delete-workout/:id', deleteWorkout);
-workoutRouter.get('/get-streaks',authenticateToken,getUserWorkoutStreak)
+workoutRouter.get('/get-streaks', authenticateToken, getUserWorkoutStreak) //remaining
 
 export default workoutRouter;

@@ -19,16 +19,16 @@ const authRoutes = Router();
 
 authRoutes.get('/get-all-users', getAllUsers)
 authRoutes.get('/get-user',authenticateToken, getUser)
-authRoutes.get('/search-user/:searchterm', searchUsers)
+authRoutes.get('/search-user/:searchterm', searchUsers) //remaining
 authRoutes.post('/login', loginUser)
 authRoutes.post('/create-user', createUser)
 authRoutes.put('/edit-user/:id', updateUser)
-authRoutes.delete('/delete-user/:id', deleteUser)
+authRoutes.delete('/delete-user/:id',authenticateToken, deleteUser)
 /////////////////////////////////////////////////////////////
 authRoutes.post('/follow/:targetUserId', authenticateToken, followUser);
 authRoutes.post('/unfollow/:targetUserId', authenticateToken, unfollowUser);
-authRoutes.get('/get-followers/:id', getFollowers);
-authRoutes.get('/get-following/:id', getFollowing);
+authRoutes.get('/get-followers/:id', getFollowers); //remaining
+authRoutes.get('/get-following/:id', getFollowing); //remaining
 //notifications
 authRoutes.get('/get-notifications',authenticateToken, getNotifications);
 

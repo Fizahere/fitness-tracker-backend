@@ -13,7 +13,7 @@ const nutritionRouter = Router()
 
 nutritionRouter.get('/get-nutritions', authenticateToken, getNutritions);
 nutritionRouter.get('/get-nutrition-by-id/:id', getNutritionById)
-nutritionRouter.get('/search-nutrition/:searchQuery', searchNutritions);
+nutritionRouter.get('/search-nutrition/:searchQuery', searchNutritions); //remaining
 nutritionRouter.post('/add-nutrition', addNutritions);
 nutritionRouter.put('/update-nutritions/:id', updateNutritions)
 nutritionRouter.delete('/delete-nutrition/:id', deleteNutritions)

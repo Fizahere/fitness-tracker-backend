@@ -77,10 +77,10 @@ export const loginUser = async (req, res) => {
             // { expiresIn: '1h' }
         );
         const sendNotification = new Notification({
-            toUser:targetUserId,
+            toUser: targetUserId,
             message: `Welcome Back, ${user.username}.`,
         })
-       await sendNotification.save();
+        await sendNotification.save();
         res.json({ token, user: { username: user.username, } });
     } catch (error) {
         res.status(500).json({ msg: 'internal server error.' });
@@ -116,9 +116,12 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
     try {
-        const results = await User.findByIdAndDelete(req.params.id);
-        if (!results) {
-            return res.status(404).json({ msg: 'user not found' });
+        const userIdFromToken = req.user.id;
+        if (userIdFromToken === req.params.id) {
+            const results = await User.findByIdAndDelete(req.params.id);
+            if (!results) {
+                return res.status(404).json({ msg: 'user not found' });
+            }
         }
         return res.status(200).json({ msg: 'user deleted.' });
     } catch (error) {
@@ -205,11 +208,11 @@ export const followUser = async (req, res) => {
         await user.save();
 
         const sendNotification = new Notification({
-            fromUser:userId,
-            toUser:targetUserId,
+            fromUser: userId,
+            toUser: targetUserId,
             message: `${user.username} followed you.`,
         })
-       await sendNotification.save();
+        await sendNotification.save();
 
         return res.status(200).json({ msg: `You are now following ${userToFollow.username}` });
     } catch (error) {
