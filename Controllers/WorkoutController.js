@@ -1,3 +1,4 @@
+import Notification from "../Models/NotificationModel.js";
 import Workout from "../Models/WorkoutModel.js"
 
 export const getAllWorkouts = async (req, res) => {
@@ -113,7 +114,7 @@ export const addWorkout = async (req, res) => {
         await newWrokout.save();
         const sendNotification = new Notification({
             toUser:userId,
-            message: `Never expected less from ${user.username}, keep going.`,
+            message: "`Never expected less from ${user.username}, keep going.`",
         })
        await sendNotification.save();
         res.status(201).json({ msg: 'workout added.', newWrokout })

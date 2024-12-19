@@ -1,3 +1,4 @@
+import Notification from "../Models/NotificationModel.js";
 import Nutrition from "../Models/NutrionModel.js"
 
 export const getNutritions = async (req, res) => {
