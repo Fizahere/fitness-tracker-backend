@@ -15,8 +15,7 @@ const port = 2000;
 connectDb();
 
 app.use(express.json());
-const persistentFolder = path.resolve('/mnt/data/files');  
-app.use('/files', express.static(persistentFolder));
+app.use('/files', express.static(path.resolve('./files')));
 
 const allowedOrigins = ['https://fitness-tracker-backend-1-vqav.onrender.com', 'http://localhost:5173'];
 app.use(cors({
