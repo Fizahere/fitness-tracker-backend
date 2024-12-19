@@ -4,7 +4,7 @@ const notificationSchema = new mongoose.Schema({
   fromUser: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    default:'675edee358f406ba8c7ce067'
+    default:'6763d8866dc438359a6bde9f'
   },
   toUser: {
     type: mongoose.Schema.Types.ObjectId,
