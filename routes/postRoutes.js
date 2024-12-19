@@ -18,7 +18,7 @@ import { authenticateToken } from "../Middlewares/authMiddleWare.js";
 const postRoutes = Router()
 
 postRoutes.get('/get-all-posts', getAllPosts);
-postRoutes.get('/get-posts',authenticateToken, getPosts);
+postRoutes.get('/get-posts/:id', getPosts);
 postRoutes.get('/get-post/:id', getPostById); //remaining
 postRoutes.get('/search-post/:searchterm', searchPosts) //remaining
 postRoutes.post('/mark-as-read', authenticateToken, markNotificationAsRead) //remaining

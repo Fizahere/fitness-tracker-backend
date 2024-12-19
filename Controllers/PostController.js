@@ -13,7 +13,8 @@ export const getAllPosts = async (req, res) => {
 };
 export const getPosts = async (req, res) => {
     try {
-        const author = req?.user?.id;
+        // const author = req?.user?.id;
+        const author = req.params.id;
 
         if (!author) {
             return res.status(400).json({ msg: 'User is not authenticated.' });

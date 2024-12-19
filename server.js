@@ -6,7 +6,8 @@ import nutritionRouter from './routes/nutritionRoutes.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import postRoutes from './routes/postRoutes.js';
-import path from 'path'
+import path from 'path';
+
 dotenv.config();
 const app = express();
 const port = 2000;
