@@ -15,7 +15,9 @@ export const getAllWorkouts = async (req, res) => {
 
 export const getWorkouts = async (req, res) => {
     try {
-        const userId = req.user.id;
+        // const userId = req.user.id;
+        const userId = req.params.id;
+
         const results = await Workout.find({ userId });
 
         if (!results.length) {

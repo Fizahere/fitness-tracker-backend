@@ -15,7 +15,7 @@ import { authenticateToken } from '../Middlewares/authMiddleWare.js'
 const workoutRouter = Router()
 
 workoutRouter.get('/get-all-workouts', getAllWorkouts);
-workoutRouter.get('/get-workouts', authenticateToken, getWorkouts);
+workoutRouter.get('/get-workouts', getWorkouts);
 workoutRouter.get('/get-workout/:id', getWorkoutById);
 workoutRouter.get('/search-workout/:searchQuery', searchWorkout); //remaining
 workoutRouter.get('/get-calories', authenticateToken, getCalories); //remaining
