@@ -114,7 +114,7 @@ export const addWorkout = async (req, res) => {
         await newWrokout.save();
         const sendNotification = new Notification({
             toUser:userId,
-            message: "`Never expected less from ${user.username}, keep going.`",
+            message: `Never expected less from you, keep going.`,
         })
        await sendNotification.save();
         res.status(201).json({ msg: 'workout added.', newWrokout })
