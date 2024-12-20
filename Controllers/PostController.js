@@ -2,8 +2,6 @@ import Posts from '../Models/PostModel.js'
 import { upload } from '../Middlewares/imageMiddleWare.js';
 import multer from 'multer';
 import Notification from '../Models/NotificationModel.js';
-import fs from 'fs/promises';
-import path from 'path'
 
 export const getAllPosts = async (req, res) => {
     try {
@@ -56,86 +54,67 @@ export const getPostById = async (req, res) => {
 
 export const createPost = async (req, res) => {
     try {
-      const { author, content } = req.body;
-      let file = req.file; 
-  
-      if (!file && !req.body.file) {
-        return res.status(400).json({ error: 'No file provided' });
-      }
-        if (req.body.file && !file) {
-        const base64File = req.body.file;
-        const match = base64File.match(/^data:(.+);base64,(.+)$/);
-        if (!match) {
-          return res.status(400).json({ error: 'Invalid file format' });
-        }
-  
-        const mimeType = match[1]; 
-        const base64Data = match[2]; 
-        const ext = mimeType.split('/')[1]; 
-        const fileName = `file_${Date.now()}.${ext}`;
-        const filePath = path.join('./files', fileName);
-  
-        await fs.writeFile(filePath, base64Data, 'base64');
-  
-        file = { path: filePath }; 
-      }
-  
-      const newPost = new Posts({
-        author,
-        content,
-        image: file.path, 
-      });
-  
-      await newPost.save();
-      return res.status(201).json({ msg: 'Post created successfully.', post: newPost });
-    } catch (error) {
-      console.error('Error:', error.message);
-      return res.status(500).json({ msg: 'Internal server error.', error: error.message });
-    }
-  };
-
-  export const updatePost = async (req, res) => {
-    try {
-        const postId = req.params.id;
-
-        if (!postId) {
-            return res.status(400).json({ message: 'Post ID is missing.' });
-        }
-
-        // Upload the file first using the upload middleware
         upload(req, res, async (err) => {
-            if (err) {
-                return res.status(400).json({ message: err.message });
+            if (err instanceof multer.MulterError) {
+                return res.status(400).json({ msg: err.message });
+            } else if (err) {
+                return res.status(400).json({ msg: err.message });
+            }
+            if (!req.file) {
+                return res.status(400).json({ msg: 'No file selected!' });
             }
 
             const { author, content } = req.body;
-            let image = req.file ? req.file.path : undefined;
+            console.log(author, content)
+            const image = req.file.path;
 
-            // If no new image was uploaded, keep the current image
-            if (!image) {
-                const existingPost = await Posts.findById(postId);
-                if (!existingPost) {
-                    return res.status(404).json({ message: 'Post not found.' });
-                }
-                image = existingPost.image; // Keep the existing image
+            const results = new Posts({
+                author,
+                content,
+                image,
+            });
+
+            await results.save();
+            return res.status(201).json({ msg: 'Post created successfully.', results });
+        });
+    } catch (error) {
+        return res.status(500).json({ msg: 'Internal server error.', error: error.message });
+    }
+};
+
+export const updatePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        if (!postId) {
+            return res.status(404).json({ msg: 'Post ID is missing.' });
+        }
+
+        upload(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({ msg: err.message });
             }
 
-            // Update the post
-            const updatedPost = await Posts.findByIdAndUpdate(
+            if (!req.file) {
+                return res.status(400).json({ msg: 'No file selected!' });
+            }
+
+            const { author, content } = req.body;
+            const image = req.file.path;
+
+            const results = await Posts.findByIdAndUpdate(
                 postId,
                 { author, content, image },
                 { new: true, runValidators: true }
             );
 
-            if (!updatedPost) {
-                return res.status(404).json({ message: 'Post not found.' });
+            if (!results) {
+                return res.status(404).json({ msg: 'Post not found.' });
             }
 
-            return res.status(200).json({ message: 'Post updated successfully.', updatedPost });
+            return res.status(200).json({ msg: 'Post updated.', results });
         });
     } catch (error) {
-        console.error('Error updating post:', error);
-        return res.status(500).json({ message: 'Internal server error.', error: error.message });
+        return res.status(500).json({ msg: 'Internal server error.' });
     }
 };
 
