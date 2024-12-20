@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
     length: 75,
     default: 'We Love Fitness Tracker.'
   },
+  location: {
+    city: { type: String, default: 'Karachi' },
+    country: { type: String, default: 'Pakistan' }
+  },
   profileImage: {
     type: String,
     default: '../files/userImage.png'
