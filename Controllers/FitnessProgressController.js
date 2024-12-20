@@ -16,10 +16,9 @@ export const createProgress = async (req, res) => {
         if (!runTime || !liftingWeights) {
             return res.status(400).json({ msg: 'performance metrics are not filled properly.' });
         }
-        console.log(userId,
-            weight,
-            bodyMeasurements,
-            performanceMetrics,'data from frontend')
+        
+        await User.findByIdAndUpdate(userId, { currentWeight: weight });
+
         const progress = new Progress({
             userId,
             weight,
@@ -28,7 +27,6 @@ export const createProgress = async (req, res) => {
         });
 
         const savedProgress = await progress.save();
-        console.log(savedProgress,'save progress')
         return res.status(201).json({ msg: 'Progress created successfully.', data: savedProgress });
     } catch (error) {
         console.error('Error creating progress:', error);

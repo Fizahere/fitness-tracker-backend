@@ -25,6 +25,7 @@ const userSchema = new mongoose.Schema({
     city: { type: String, default: 'Karachi' },
     country: { type: String, default: 'Pakistan' }
   },
+  currentWeight: { type: Number, default: 0 },
   profileImage: {
     type: String,
     default: '../files/userImage.png'
