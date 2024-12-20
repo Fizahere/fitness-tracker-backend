@@ -4,8 +4,17 @@ export const createProgress = async (req, res) => {
     try {
         const { userId, weight, bodyMeasurements, performanceMetrics } = req.body;
 
-        if (!userId || !weight) {
-            return res.status(400).json({ msg: 'User ID and weight are required.' });
+        if (!userId || !weight || !bodyMeasurements || !performanceMetrics) {
+            return res.status(400).json({ msg: 'all fields are required.' });
+        }
+        const { chest, waist, arms } = bodyMeasurements;
+        if (!chest || !waist || !arms) {
+            return res.status(400).json({ msg: 'body measurements are not filled properly.' });
+        }
+
+        const { runTime, liftingWeights } = performanceMetrics;
+        if (!runTime || !liftingWeights) {
+            return res.status(400).json({ msg: 'performance metrics are not filled properly.' });
         }
 
         const progress = new Progress({
@@ -27,7 +36,7 @@ export const getProgressByUser = async (req, res) => {
     try {
         const userId = req.params.id;
 
-        const progressRecords = await Progress.find({ userId }).sort({ date: -1 }); 
+        const progressRecords = await Progress.find({ userId }).sort({ date: -1 });
         if (!progressRecords) {
             return res.status(404).json({ msg: 'No progress records found for this user.' });
         }
