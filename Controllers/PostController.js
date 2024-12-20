@@ -97,7 +97,6 @@ export const createPost = async (req, res) => {
       return res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
   };
-  
 
 export const updatePost = async (req, res) => {
     try {
