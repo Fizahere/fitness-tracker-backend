@@ -14,7 +14,6 @@ import {
     updatePost,
 } from "../Controllers/PostController.js";
 import { authenticateToken } from "../Middlewares/authMiddleWare.js";
-import { upload } from "../Middlewares/imageMiddleWare.js";
 
 const postRoutes = Router()
 
@@ -23,7 +22,7 @@ postRoutes.get('/get-posts/:id', getPosts);
 postRoutes.get('/get-post/:id', getPostById); //remaining
 postRoutes.get('/search-post/:searchterm', searchPosts) //remaining
 postRoutes.post('/mark-as-read', authenticateToken, markNotificationAsRead) //remaining
-postRoutes.post('/create-post',upload, createPost);
+postRoutes.post('/create-post', createPost);
 postRoutes.post('/like-post', authenticateToken, likePost);
 postRoutes.post('/dislike-post', authenticateToken, disLikePost);
 postRoutes.post('/comment/:id', authenticateToken, comment);
