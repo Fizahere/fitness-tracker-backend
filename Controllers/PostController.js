@@ -55,44 +55,49 @@ export const getPostById = async (req, res) => {
 }
 
 export const createPost = async (req, res) => {
-  try {
-    const { author, content, file } = req.body;
-
-    if (!file) {
-      return res.status(400).json({ error: 'No file provided' });
+    try {
+      const { author, content } = req.body;
+      let file = req.file; // For multer
+  
+      if (!file && !req.body.file) {
+        return res.status(400).json({ error: 'No file provided' });
+      }
+  
+      // Handle base64 file if provided in req.body
+      if (req.body.file && !file) {
+        const base64File = req.body.file;
+        const match = base64File.match(/^data:(.+);base64,(.+)$/);
+        if (!match) {
+          return res.status(400).json({ error: 'Invalid file format' });
+        }
+  
+        const mimeType = match[1]; // e.g., 'image/png'
+        const base64Data = match[2]; // Base64-encoded string
+        const ext = mimeType.split('/')[1]; // Get file extension, e.g., 'png'
+        const fileName = `file_${Date.now()}.${ext}`;
+        const filePath = path.join('./files', fileName);
+  
+        // Save the base64 file
+        await fs.writeFile(filePath, base64Data, 'base64');
+  
+        file = { path: filePath }; // Create a mock file object to proceed
+      }
+  
+      // Create a new post
+      const newPost = new Posts({
+        author,
+        content,
+        image: file.path, // Save the file path in the database
+      });
+  
+      await newPost.save();
+      return res.status(201).json({ msg: 'Post created successfully.', post: newPost });
+    } catch (error) {
+      console.error('Error:', error.message);
+      return res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
-
-    // Validate and decode base64 file
-    const match = file.match(/^data:(.+);base64,(.+)$/);
-    if (!match) {
-      return res.status(400).json({ error: 'Invalid file format' });
-    }
-
-    const mimeType = match[1]; // e.g., 'image/png'
-    const base64Data = match[2]; // Base64-encoded string
-    const ext = mimeType.split('/')[1]; // Get file extension, e.g., 'png'
-
-    const fileName = `file_${Date.now()}.${ext}`;
-    const filePath = path.join('./files', fileName);
-
-    // Save the file
-    await fs.writeFile(filePath, base64Data, 'base64');
-
-    // Create a new post
-    const newPost = new Posts({
-      author,
-      content,
-      image: filePath, // Save the file path in the database
-    });
-
-    await newPost.save();
-
-    return res.status(201).json({ msg: 'Post created successfully.', post: newPost });
-  } catch (error) {
-    console.error('Error:', error.message);
-    return res.status(500).json({ msg: 'Internal server error.', error: error.message });
-  }
-};
+  };
+  
 
 export const updatePost = async (req, res) => {
     try {
