@@ -94,39 +94,48 @@ export const createPost = async (req, res) => {
     }
   };
 
-export const updatePost = async (req, res) => {
+  export const updatePost = async (req, res) => {
     try {
         const postId = req.params.id;
+
         if (!postId) {
-            return res.status(404).json({ msg: 'Post ID is missing.' });
+            return res.status(400).json({ message: 'Post ID is missing.' });
         }
 
+        // Upload the file first using the upload middleware
         upload(req, res, async (err) => {
             if (err) {
-                return res.status(400).json({ msg: err.message });
-            }
-
-            if (!req.file) {
-                return res.status(400).json({ msg: 'No file selected!' });
+                return res.status(400).json({ message: err.message });
             }
 
             const { author, content } = req.body;
-            const image = req.file.path;
+            let image = req.file ? req.file.path : undefined;
 
-            const results = await Posts.findByIdAndUpdate(
+            // If no new image was uploaded, keep the current image
+            if (!image) {
+                const existingPost = await Posts.findById(postId);
+                if (!existingPost) {
+                    return res.status(404).json({ message: 'Post not found.' });
+                }
+                image = existingPost.image; // Keep the existing image
+            }
+
+            // Update the post
+            const updatedPost = await Posts.findByIdAndUpdate(
                 postId,
                 { author, content, image },
                 { new: true, runValidators: true }
             );
 
-            if (!results) {
-                return res.status(404).json({ msg: 'Post not found.' });
+            if (!updatedPost) {
+                return res.status(404).json({ message: 'Post not found.' });
             }
 
-            return res.status(200).json({ msg: 'Post updated.', results });
+            return res.status(200).json({ message: 'Post updated successfully.', updatedPost });
         });
     } catch (error) {
-        return res.status(500).json({ msg: 'Internal server error.' });
+        console.error('Error updating post:', error);
+        return res.status(500).json({ message: 'Internal server error.', error: error.message });
     }
 };
 
