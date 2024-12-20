@@ -2,6 +2,8 @@ import Posts from '../Models/PostModel.js'
 import { upload } from '../Middlewares/imageMiddleWare.js';
 import multer from 'multer';
 import Notification from '../Models/NotificationModel.js';
+import fs from 'fs/promises';
+import path from 'path'
 
 export const getAllPosts = async (req, res) => {
     try {
@@ -53,33 +55,43 @@ export const getPostById = async (req, res) => {
 }
 
 export const createPost = async (req, res) => {
-    try {
-        upload(req, res, async (err) => {
-            if (err instanceof multer.MulterError) {
-                return res.status(400).json({ msg: err.message });
-            } else if (err) {
-                return res.status(400).json({ msg: err.message });
-            }
-            if (!req.file) {
-                return res.status(400).json({ msg: 'No file selected!' });
-            }
+  try {
+    const { author, content, file } = req.body;
 
-            const { author, content } = req.body;
-            console.log(author, content)
-            const image = req.file.path;
-
-            const results = new Posts({
-                author,
-                content,
-                image,
-            });
-
-            await results.save();
-            return res.status(201).json({ msg: 'Post created successfully.', results });
-        });
-    } catch (error) {
-        return res.status(500).json({ msg: 'Internal server error.', error: error.message });
+    if (!file) {
+      return res.status(400).json({ error: 'No file provided' });
     }
+
+    // Validate and decode base64 file
+    const match = file.match(/^data:(.+);base64,(.+)$/);
+    if (!match) {
+      return res.status(400).json({ error: 'Invalid file format' });
+    }
+
+    const mimeType = match[1]; // e.g., 'image/png'
+    const base64Data = match[2]; // Base64-encoded string
+    const ext = mimeType.split('/')[1]; // Get file extension, e.g., 'png'
+
+    const fileName = `file_${Date.now()}.${ext}`;
+    const filePath = path.join('./files', fileName);
+
+    // Save the file
+    await fs.writeFile(filePath, base64Data, 'base64');
+
+    // Create a new post
+    const newPost = new Posts({
+      author,
+      content,
+      image: filePath, // Save the file path in the database
+    });
+
+    await newPost.save();
+
+    return res.status(201).json({ msg: 'Post created successfully.', post: newPost });
+  } catch (error) {
+    console.error('Error:', error.message);
+    return res.status(500).json({ msg: 'Internal server error.', error: error.message });
+  }
 };
 
 export const updatePost = async (req, res) => {

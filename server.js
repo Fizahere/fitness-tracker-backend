@@ -15,6 +15,9 @@ const port = 2000;
 connectDb();
 
 app.use(express.json());
+
+app.use(express.json({ limit: '10mb' })); // Set JSON payload size limit
+
 app.use('/files', express.static(path.resolve('./files')));
 
 const allowedOrigins = ['https://fitness-tracker-backend-1-vqav.onrender.com', 'http://localhost:5173'];
