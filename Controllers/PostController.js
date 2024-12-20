@@ -55,47 +55,44 @@ export const getPostById = async (req, res) => {
 }
 
 export const createPost = async (req, res) => {
-  try {
-    const { author, content } = req.body;
-    let file = req.file; 
-
-    if (!file && !req.body.file) {
-      return res.status(400).json({ error: 'No file provided' });
-    }
-
-    if (req.body.file && !file) {
-      const base64File = req.body.file;
-      const match = base64File.match(/^data:(.+);base64,(.+)$/);
-      
-      if (!match) {
-        return res.status(400).json({ error: 'Invalid file format' });
+    try {
+      const { author, content } = req.body;
+      let file = req.file; 
+  
+      if (!file && !req.body.file) {
+        return res.status(400).json({ error: 'No file provided' });
       }
-
-      const mimeType = match[1]; 
-      const base64Data = match[2]; 
-      const ext = mimeType.split('/')[1]; 
-      const fileName = `file_${Date.now()}.${ext}`;
-      const filePath = path.join(__dirname, 'files', fileName);
-
-      await fs.writeFile(filePath, base64Data, 'base64');
-      
-      file = { path: filePath }; 
+        if (req.body.file && !file) {
+        const base64File = req.body.file;
+        const match = base64File.match(/^data:(.+);base64,(.+)$/);
+        if (!match) {
+          return res.status(400).json({ error: 'Invalid file format' });
+        }
+  
+        const mimeType = match[1]; 
+        const base64Data = match[2]; 
+        const ext = mimeType.split('/')[1]; 
+        const fileName = `file_${Date.now()}.${ext}`;
+        const filePath = path.join('./files', fileName);
+  
+        await fs.writeFile(filePath, base64Data, 'base64');
+  
+        file = { path: filePath }; 
+      }
+  
+      const newPost = new Posts({
+        author,
+        content,
+        image: file.path, 
+      });
+  
+      await newPost.save();
+      return res.status(201).json({ msg: 'Post created successfully.', post: newPost });
+    } catch (error) {
+      console.error('Error:', error.message);
+      return res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
-
-    const newPost = new Posts({
-      author,
-      content,
-      image: file.path, 
-    });
-
-    await newPost.save();
-    return res.status(201).json({ msg: 'Post created successfully.', post: newPost });
-  } catch (error) {
-    console.error('Error:', error.message);
-    return res.status(500).json({ msg: 'Internal server error.', error: error.message });
-  }
-};
-
+  };
 
 export const updatePost = async (req, res) => {
     try {
