@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import postRoutes from './routes/postRoutes.js';
 import path from 'path';
+import progressRouter from './routes/progressRoutes.js';
 
 
 
@@ -27,6 +28,9 @@ const port = 2000;
 connectDb();
 
 app.use(express.json());
+
+app.use(express.json({ limit: '10mb' }));
+
 app.use('/files', express.static(path.resolve('./files')));
 
 const allowedOrigins = ['https://fitness-tracker-backend-1-vqav.onrender.com', 'http://localhost:5173'];
@@ -50,6 +54,7 @@ app.use('/auth', authRoutes);
 app.use('/workout', workoutRouter);
 app.use('/nutrition', nutritionRouter);
 app.use('/post', postRoutes);
+app.use('/progress', progressRouter);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

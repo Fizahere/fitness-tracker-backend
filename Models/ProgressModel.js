@@ -1,24 +1,20 @@
 import mongoose from "mongoose";
 
-const progressSchema = new mongoose.Schema({
-  user: {
+const ProgressSchema = new mongoose.Schema({
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  weight: {
-    type: Number,
-    required: true
-  },
+  weight: { type: Number },
   bodyMeasurements: {
     chest: Number,
     waist: Number,
-    hips: Number,
-    arms: Number
+    arms: Number,
   },
   performanceMetrics: {
-    runTime: Number, 
-    maxLift: Number
+    runTime: Number,
+    liftingWeights: Number,
   },
   createdAt: {
     type: Date,
@@ -26,5 +22,5 @@ const progressSchema = new mongoose.Schema({
   }
 });
 
-const Progress = mongoose.model('Progress', progressSchema);
+const Progress = mongoose.model('Progress', ProgressSchema);
 export default Progress;

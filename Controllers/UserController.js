@@ -34,7 +34,7 @@ export const getUserById = async (req, res) => {
 //sipn up & create user
 export const createUser = async (req, res) => {
     try {
-        const { username, email, password: plainTextPassword, about: bio } = req.body;
+        const { username, email, password: plainTextPassword, about: bio, location: loc, currentWeight: weight } = req.body;
         const findUserByUsername = await User.findOne({ username });
         const findUserByEmail = await User.findOne({ email });
         if (findUserByUsername) {
@@ -47,12 +47,16 @@ export const createUser = async (req, res) => {
         const password = await bcrypt.hash(plainTextPassword, 10);
         const profileImage = req.file?.path || undefined;
         const backgroundImage = req.file?.path || undefined;
-        const about = bio || undefined
+        const about = bio || undefined;
+        const location = loc || undefined;
+        const currentWeight = weight || undefined;
         const user = new User({
             username,
             email,
             password,
             about,
+            location,
+            currentWeight,
             profileImage,
             backgroundImage,
         });
@@ -104,12 +108,12 @@ export const updateUser = async (req, res) => {
             if (!req.file) {
                 return res.status(400).json({ msg: 'no file selected!' });
             }
-            const { username, email, bio } = req.body;
+            const { username, email, bio, location, currentWeight } = req.body;
             const profileImage = req.file.path;
             const backgroundImage = req.file.path;
             const results = await User.findByIdAndUpdate(
                 req.params.id,
-                { username, email, bio, profileImage, backgroundImage },
+                { username, email, bio, location, currentWeight, profileImage, backgroundImage },
                 { new: true, runValidators: true }
             );
             if (!results) {
