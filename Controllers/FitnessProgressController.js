@@ -104,3 +104,30 @@ export const deleteProgress = async (req, res) => {
         return res.status(500).json({ msg: 'Internal server error.', error: error.message });
     }
 };
+
+const escapeRegex = (text) => {
+    return text.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+};
+export const searchProgress = async (req, res) => {
+    try {
+        const searchQuery = req.params.searchQuery;
+
+        if (!searchQuery) {
+            return res.status(400).json({ msg: "Search term is required." });
+        }
+        const sanitizedSearchTerm = escapeRegex(searchQuery);
+        const result = await Progress.find({
+            "$or": [
+                { "weight": { $regex: sanitizedSearchTerm, $options: 'i' } },
+                // { "bodyMeasurements.chest": { $regex: sanitizedSearchTerm, $options: 'i' } }
+            ]
+        });
+        if (result.length === 0) {
+            return res.status(404).json({ msg: "No matching nutrprogress records found." });
+        }
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: "Internal server error." });
+    }
+};
