@@ -284,16 +284,16 @@ export const searchPosts = async (req, res) => {
 
 export const searchUserPosts = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const author = req.user.id;
         const { searchQuery } = req.params;
-        if (!searchQuery || !userId) {
+        if (!searchQuery || !author) {
             return res.status(400).json({ msg: "User ID and search term are required." });
         }
 
         const sanitizedSearchTerm = escapeRegex(searchQuery);
 
         const result = await Posts.find({
-            userId,
+            author,
             "$or": [
                 { "content": { $regex: sanitizedSearchTerm, $options: 'i' } }
             ]
