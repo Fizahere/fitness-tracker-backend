@@ -8,7 +8,8 @@ import {
     searchWorkout,
     updateWorkout,
     getCalories,
-    getUserWorkoutStreak
+    getUserWorkoutStreak,
+    searchUserWorkouts
 } from "../Controllers/WorkoutController.js";
 import { authenticateToken } from '../Middlewares/authMiddleWare.js'
 
@@ -18,6 +19,7 @@ workoutRouter.get('/get-all-workouts', getAllWorkouts);
 workoutRouter.get('/get-workouts/:id', getWorkouts);
 workoutRouter.get('/get-workout/:id', getWorkoutById);
 workoutRouter.get('/search-workout/:searchQuery', searchWorkout); //remaining
+workoutRouter.get('/search-user-workout/:searchQuery', authenticateToken, searchUserWorkouts); //remaining
 workoutRouter.get('/get-calories', authenticateToken, getCalories); //remaining
 workoutRouter.post('/add-workout', addWorkout);
 workoutRouter.put('/update-workout/:id', updateWorkout);

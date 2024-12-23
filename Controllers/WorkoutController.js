@@ -192,3 +192,32 @@ export const searchWorkout = async (req, res) => {
     }
 };
 
+export const searchUserWorkouts = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { searchQuery } = req.params;
+
+        if (!searchQuery || !userId) {
+            return res.status(400).json({ msg: "User ID and search term are required." });
+        }
+
+        const sanitizedSearchTerm = escapeRegex(searchQuery);
+
+        const result = await Workout.find({
+            userId,
+            "$or": [
+                { "title": { $regex: sanitizedSearchTerm, $options: 'i' } },
+                { "category": { $regex: sanitizedSearchTerm, $options: 'i' } }
+            ]
+        });
+
+        if (result.length === 0) {
+            return res.status(404).json({ msg: "No matching workouts found for this user." });
+        }
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: "Internal server error." });
+    }
+};

@@ -11,6 +11,7 @@ import {
     likePost,
     markNotificationAsRead,
     searchPosts,
+    searchUserPosts,
     updatePost,
 } from "../Controllers/PostController.js";
 import { authenticateToken } from "../Middlewares/authMiddleWare.js";
@@ -21,6 +22,7 @@ postRoutes.get('/get-all-posts', getAllPosts);
 postRoutes.get('/get-posts/:id', getPosts);
 postRoutes.get('/get-post/:id', getPostById); //remaining
 postRoutes.get('/search-post/:searchterm', searchPosts) //remaining
+postRoutes.get('/search-user-post/:searchterm',authenticateToken, searchUserPosts) //remaining
 postRoutes.post('/mark-as-read', authenticateToken, markNotificationAsRead) //remaining
 postRoutes.post('/create-post', createPost);
 postRoutes.post('/like-post', authenticateToken, likePost);

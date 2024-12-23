@@ -171,7 +171,7 @@ export const disLikePost = async (req, res) => {
 export const comment = async (req, res) => {
     try {
         const author = req.user.id;
-        const postId=req.params.id;
+        const postId = req.params.id;
         const { content } = req.body;
         const postToCommentOn = await Posts.findById(postId);
         if (!postToCommentOn) {
@@ -276,5 +276,34 @@ export const searchPosts = async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({ msg: "internal server error.", error: error.message });
+    }
+};
+
+export const searchUserPosts = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { searchQuery } = req.params;
+
+        if (!searchQuery || !userId) {
+            return res.status(400).json({ msg: "User ID and search term are required." });
+        }
+
+        const sanitizedSearchTerm = escapeRegex(searchQuery);
+
+        const result = await Posts.find({
+            userId,
+            "$or": [
+                { "content": { $regex: sanitizedSearchTerm, $options: 'i' } }
+            ]
+        });
+
+        if (result.length === 0) {
+            return res.status(404).json({ msg: "No matching posts found for this user." });
+        }
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ msg: "Internal server error." });
     }
 };
