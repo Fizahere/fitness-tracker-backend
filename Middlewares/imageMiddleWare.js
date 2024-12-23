@@ -1,51 +1,26 @@
 import multer from "multer";
+import AWS from 'aws-sdk';
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './files'); 
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname); 
-    },
+// Set up AWS SDK for Wasabi (S3-compatible)
+const s3 = new AWS.S3({
+    endpoint: 'https://s3.wasabisys.com', // Wasabi endpoint
+    accessKeyId: 'PEEOK0E4KDU4Q5EIOZVF',    // Wasabi access key
+    secretAccessKey: 'BmQzYV9Ndb8mfnOCF5jQeKMBdE71ozWstZKpq4pI', // Wasabi secret key
+    region: 'us-east-1',                   // Wasabi region
 });
+
+
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, './files'); 
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, file.originalname); 
+//     },
+// });
+const storage = multer.memoryStorage(); // Store the file in memory
 
 export const upload = multer({
     storage,
     limits: { fileSize: 10 * 1024 * 1024 }, 
 }).single('file'); 
-
-// import multer from 'multer';
-// import fs from 'fs';
-// // import Posts from '../Models/PostModel.js';
-
-// // Ensure the directory exists
-// if (!fs.existsSync('./files')) {
-//     fs.mkdirSync('./files', { recursive: true });
-// }
-
-// // Configure Multer Storage
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, './files');
-//     },
-//     filename: (req, file, cb) => {
-//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-//         cb(null, `${uniqueSuffix}-${file.originalname}`);
-//     },
-// });
-
-// // File filter to allow only images
-// const fileFilter = (req, file, cb) => {
-//     if (file.mimetype.startsWith('image/')) {
-//         cb(null, true);
-//     } else {
-//         cb(new Error('Only image files are allowed!'), false);
-//     }
-// };
-
-// // Multer configuration
-// export const upload = multer({
-//     storage,
-//     limits: { fileSize: 10 * 1024 * 1024 }, 
-//     fileFilter,
-// }).single('file');
