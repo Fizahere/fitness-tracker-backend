@@ -8,7 +8,7 @@ import cors from 'cors';
 import postRoutes from './routes/postRoutes.js';
 import path from 'path';
 import progressRouter from './routes/progressRoutes.js';
-
+import AWS from 'aws-sdk'
 
 
 
