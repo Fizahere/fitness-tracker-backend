@@ -283,7 +283,7 @@ export const searchUserPosts = async (req, res) => {
     try {
         const userId = req.user.id;
         const { searchQuery } = req.params;
-
+console.log(userId,searchQuery,'data')
         if (!searchQuery || !userId) {
             return res.status(400).json({ msg: "User ID and search term are required." });
         }
