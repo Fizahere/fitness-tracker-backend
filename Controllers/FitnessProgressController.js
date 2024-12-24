@@ -131,6 +131,34 @@ export const searchProgress = async (req, res) => {
         return res.status(500).json({ msg: "Internal server error." });
     }
 };
+// export const searchUserProgress = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         const { searchQuery } = req.params;
+
+//         if (!searchQuery || !userId) {
+//             return res.status(400).json({ msg: "User ID and search term are required." });
+//         }
+
+//         const sanitizedSearchTerm = escapeRegex(searchQuery);
+
+//         const result = await Progress.find({
+//             userId,
+//             "$or": [
+//                 { "weight": { $regex: sanitizedSearchTerm, $options: 'i' } }
+//             ]
+//         });
+
+//         if (result.length === 0) {
+//             return res.status(404).json({ msg: "No matching nutritions found for this user." });
+//         }
+
+//         return res.status(200).json(result);
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ msg: "Internal server error." });
+//     }
+// };
 export const searchUserProgress = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -140,17 +168,19 @@ export const searchUserProgress = async (req, res) => {
             return res.status(400).json({ msg: "User ID and search term are required." });
         }
 
-        const sanitizedSearchTerm = escapeRegex(searchQuery);
+        const searchWeight = parseFloat(searchQuery);
+
+        if (isNaN(searchWeight)) {
+            return res.status(400).json({ msg: "Search query must be a valid number." });
+        }
 
         const result = await Progress.find({
             userId,
-            "$or": [
-                { "weight": { $regex: sanitizedSearchTerm, $options: 'i' } }
-            ]
+            weight: searchWeight
         });
 
         if (result.length === 0) {
-            return res.status(404).json({ msg: "No matching nutritions found for this user." });
+            return res.status(404).json({ msg: "No matching progress records found for this user." });
         }
 
         return res.status(200).json(result);
