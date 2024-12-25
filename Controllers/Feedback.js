@@ -7,6 +7,7 @@ const router = express.Router();
 const FeedbackSchema = new mongoose.Schema({
     email: { type: String, required: true },
     feedback: { type: String, required: true },
+    rating: { type: Number, required: true }, 
     createdAt: { type: Date, default: Date.now },
 });
 
@@ -14,13 +15,13 @@ const Feedback = mongoose.model("Feedback", FeedbackSchema);
 
 router.post("/create-feedback", async (req, res) => {
     try {
-        const { email, feedback } = req.body;
+        const { email, feedback, rating } = req.body;
 
-        if (!email || !feedback) {
+        if (!email || !feedback || rating === undefined) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        const newFeedback = new Feedback({ email, feedback });
+        const newFeedback = new Feedback({ email, feedback, rating });
         await newFeedback.save();
 
         res.status(200).json({ message: "Feedback submitted successfully" });
