@@ -32,11 +32,50 @@ export const getUserById = async (req, res) => {
     }
 };
 //sipn up & create user
+// export const createUser = async (req, res) => {
+//     try {
+//         const { username, email, password: plainTextPassword, about: bio, location: loc, currentWeight: weight } = req.body;
+//         const findUserByUsername = await User.findOne({ username });
+//         const findUserByEmail = await User.findOne({ email });
+//         if (findUserByUsername) {
+//             return res.status(400).json({ msg: "Username already exists." });
+//         }
+//         if (findUserByEmail) {
+//             return res.status(400).json({ msg: "Email already exists." });
+//         }
+
+//         const password = await bcrypt.hash(plainTextPassword, 10);
+//         const profileImage = req.file?.path || undefined;
+//         const backgroundImage = req.file?.path || undefined;
+//         const about = bio || undefined;
+//         const location = loc || undefined;
+//         const currentWeight = weight || undefined;
+//         const user = new User({
+//             username,
+//             email,
+//             password,
+//             about,
+//             location,
+//             currentWeight,
+//             profileImage,
+//             backgroundImage,
+//         });
+
+//         await user.save();
+
+//         return res.status(201).json({ msg: "User created successfully.", user });
+//     } catch (error) {
+//         return res.status(500).json({ msg: "Internal server error.", error: error.message });
+//     }
+// };
 export const createUser = async (req, res) => {
     try {
         const { username, email, password: plainTextPassword, about: bio, location: loc, currentWeight: weight } = req.body;
+
+        // Check if username or email already exists
         const findUserByUsername = await User.findOne({ username });
         const findUserByEmail = await User.findOne({ email });
+
         if (findUserByUsername) {
             return res.status(400).json({ msg: "Username already exists." });
         }
@@ -44,27 +83,43 @@ export const createUser = async (req, res) => {
             return res.status(400).json({ msg: "Email already exists." });
         }
 
-        const password = await bcrypt.hash(plainTextPassword, 10);
-        const profileImage = req.file?.path || undefined;
-        const backgroundImage = req.file?.path || undefined;
-        const about = bio || undefined;
-        const location = loc || undefined;
-        const currentWeight = weight || undefined;
+        // Hash password
+        let password;
+        try {
+            password = await bcrypt.hash(plainTextPassword, 10);
+        } catch (err) {
+            return res.status(500).json({ msg: "Error hashing password.", error: err.message });
+        }
+
+        // Get profile image URL from Wasabi or local file storage
+        const profileImage = req.file?.location || '';
+
+        // Create new user
         const user = new User({
             username,
             email,
             password,
-            about,
-            location,
-            currentWeight,
+            about: bio || '',  // Default to empty string if not provided
+            location: loc || '',
+            currentWeight: weight || null,  // Use null if weight is not provided
             profileImage,
-            backgroundImage,
         });
 
-        await user.save();
+        // Save user to the database
+        let savedUser;
+        try {
+            savedUser = await user.save();
+        } catch (error) {
+            console.error('Error saving user:', error);
+            return res.status(500).json({ msg: "Error saving user to the database.", error: error.message });
+        }
 
-        return res.status(201).json({ msg: "User created successfully.", user });
+        return res.status(201).json({
+            msg: "User created successfully.",
+            user: savedUser.toObject(),  // Exclude password in the response
+        });
     } catch (error) {
+        console.error('Error creating user:', error);
         return res.status(500).json({ msg: "Internal server error.", error: error.message });
     }
 };

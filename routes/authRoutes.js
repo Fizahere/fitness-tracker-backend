@@ -15,6 +15,7 @@ import {
 } from '../Controllers/UserController.js'
 import { authenticateToken } from "../Middlewares/authMiddleWare.js";
 import { getNotifications } from "../Controllers/PostController.js";
+import { upload } from "../Middlewares/imageMiddleWare.js";
 
 const authRoutes = Router();
 
@@ -23,7 +24,9 @@ authRoutes.get('/get-user',authenticateToken, getUser)
 authRoutes.get('/get-user-by-id/:id', getUserById)
 authRoutes.get('/search-user/:searchterm', searchUsers) //remaining
 authRoutes.post('/login', loginUser)
-authRoutes.post('/create-user', createUser)
+// authRoutes.post('/create-user', createUser)
+authRoutes.post('/create-user', upload, createUser);
+
 authRoutes.put('/edit-user/:id', updateUser)
 authRoutes.delete('/delete-user/:id',authenticateToken, deleteUser)
 /////////////////////////////////////////////////////////////

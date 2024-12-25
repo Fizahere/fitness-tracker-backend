@@ -12,15 +12,6 @@ import AWS from 'aws-sdk'
 
 
 
-
-// Set up AWS SDK for Wasabi (S3-compatible)
-const s3 = new AWS.S3({
-    endpoint: 'https://s3.wasabisys.com', // Wasabi endpoint
-    accessKeyId: 'PEEOK0E4KDU4Q5EIOZVF',    // Wasabi access key
-    secretAccessKey: 'BmQzYV9Ndb8mfnOCF5jQeKMBdE71ozWstZKpq4pI', // Wasabi secret key
-    region: 'us-east-1',                   // Wasabi region
-});
-
 dotenv.config();
 const app = express();
 const port = 2000;
