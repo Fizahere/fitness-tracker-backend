@@ -29,7 +29,7 @@ postRoutes.post('/like-post', authenticateToken, likePost);
 postRoutes.post('/dislike-post', authenticateToken, disLikePost);
 postRoutes.post('/comment/:id', authenticateToken, comment);
 postRoutes.delete('/delete-comment/:id', authenticateToken, deleteComment);
-postRoutes.put('/edit-post/:id', authenticateToken, updatePost);
+postRoutes.put('/edit-post/:id', updatePost);
 postRoutes.delete('/delete-post/:id', authenticateToken, deletePost);
 
 export default postRoutes
