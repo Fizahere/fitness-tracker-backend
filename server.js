@@ -22,7 +22,8 @@ app.use(express.json({ limit: '10mb' }));
 
 app.use('/files', express.static(path.resolve('./files')));
 
-const allowedOrigins = ['https://fitness-tracker-backend-1-vqav.onrender.com', 'http://localhost:5173', 'https://fitness-tracker-red-five.vercel.app'];
+const allowedOrigins = ['https://fitness-tracker-backend-1-vqav.onrender.com', 'http://localhost:5173'];
+
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
