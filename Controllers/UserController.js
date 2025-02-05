@@ -4,6 +4,14 @@ import bcrypt from 'bcryptjs'
 import { upload } from "../Middlewares/imageMiddleWare.js";
 import mongoose from 'mongoose';
 import Notification from '../Models/NotificationModel.js';
+import { uploadImageToGitHub } from '../Middlewares/imageMiddleWare.js'
+import { fileURLToPath } from 'url'
+import fs from 'fs'
+import path from 'path'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -32,50 +40,12 @@ export const getUserById = async (req, res) => {
     }
 };
 //sipn up & create user
-// export const createUser = async (req, res) => {
-//     try {
-//         const { username, email, password: plainTextPassword, about: bio, location: loc, currentWeight: weight } = req.body;
-//         const findUserByUsername = await User.findOne({ username });
-//         const findUserByEmail = await User.findOne({ email });
-//         if (findUserByUsername) {
-//             return res.status(400).json({ msg: "Username already exists." });
-//         }
-//         if (findUserByEmail) {
-//             return res.status(400).json({ msg: "Email already exists." });
-//         }
-
-//         const password = await bcrypt.hash(plainTextPassword, 10);
-//         const profileImage = req.file?.path || undefined;
-//         const backgroundImage = req.file?.path || undefined;
-//         const about = bio || undefined;
-//         const location = loc || undefined;
-//         const currentWeight = weight || undefined;
-//         const user = new User({
-//             username,
-//             email,
-//             password,
-//             about,
-//             location,
-//             currentWeight,
-//             profileImage,
-//             backgroundImage,
-//         });
-
-//         await user.save();
-
-//         return res.status(201).json({ msg: "User created successfully.", user });
-//     } catch (error) {
-//         return res.status(500).json({ msg: "Internal server error.", error: error.message });
-//     }
-// };
 export const createUser = async (req, res) => {
     try {
-        const { username, email, password: plainTextPassword, about: bio, location: loc, currentWeight: weight } = req.body;
+        const { username, email, password: plainTextPassword, about, location, currentWeight } = req.body;
 
-        // Check if username or email already exists
         const findUserByUsername = await User.findOne({ username });
         const findUserByEmail = await User.findOne({ email });
-
         if (findUserByUsername) {
             return res.status(400).json({ msg: "Username already exists." });
         }
@@ -83,43 +53,35 @@ export const createUser = async (req, res) => {
             return res.status(400).json({ msg: "Email already exists." });
         }
 
-        // Hash password
-        let password;
-        try {
-            password = await bcrypt.hash(plainTextPassword, 10);
-        } catch (err) {
-            return res.status(500).json({ msg: "Error hashing password.", error: err.message });
+        if (!plainTextPassword) {
+            return res.status(400).json({ msg: "Password is required." });
         }
 
-        // Get profile image URL from Wasabi or local file storage
-        const profileImage = req.file?.location || '';
+        const password = await bcrypt.hash(plainTextPassword, 10);
+        const profileImage = req.file?.path || '/files/userImage.png';
+        const formattedLocation = location
+            ? {
+                city: location.city || 'Karachi',
+                country: location.country || 'Pakistan',
+            }
+            : { city: 'Karachi', country: 'Pakistan' };
 
-        // Create new user
+        const formattedWeight = currentWeight ? Number(currentWeight) : 0;
+
         const user = new User({
             username,
             email,
             password,
-            about: bio || '',  // Default to empty string if not provided
-            location: loc || '',
-            currentWeight: weight || null,  // Use null if weight is not provided
+            about: about || 'We Love Fitness Tracker.',
+            location: formattedLocation,
+            currentWeight: formattedWeight,
             profileImage,
         });
 
-        // Save user to the database
-        let savedUser;
-        try {
-            savedUser = await user.save();
-        } catch (error) {
-            console.error('Error saving user:', error);
-            return res.status(500).json({ msg: "Error saving user to the database.", error: error.message });
-        }
+        await user.save();
 
-        return res.status(201).json({
-            msg: "User created successfully.",
-            user: savedUser.toObject(),  // Exclude password in the response
-        });
+        return res.status(201).json({ msg: "User created successfully.", user });
     } catch (error) {
-        console.error('Error creating user:', error);
         return res.status(500).json({ msg: "Internal server error.", error: error.message });
     }
 };
@@ -164,16 +126,19 @@ export const updateUser = async (req, res) => {
                 return res.status(400).json({ msg: 'no file selected!' });
             }
             const { username, email, bio, location, currentWeight } = req.body;
-            const profileImage = req.file.path;
-            const backgroundImage = req.file.path;
+            const localFilePath = path.join(__dirname, "../files", req.file.filename);
+            const fileName = req.file.filename;
+            const profileImage = await uploadImageToGitHub(localFilePath, fileName);
+
             const results = await User.findByIdAndUpdate(
                 req.params.id,
-                { username, email, bio, location, currentWeight, profileImage, backgroundImage },
+                { username, email, bio, location, currentWeight, profileImage },
                 { new: true, runValidators: true }
             );
             if (!results) {
                 return res.status(404).json({ msg: 'user not found' });
             }
+            fs.unlinkSync(localFilePath);
             return res.status(200).json({ msg: 'user updated.', results });
         });
     } catch (error) {

@@ -1,16 +1,17 @@
 import mongoose from "mongoose";
-import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
     unique: true,
+    trim: true
   },
   email: {
     type: String,
     required: true,
     unique: true,
+    trim: true
   },
   password: {
     type: String,
@@ -18,7 +19,7 @@ const userSchema = new mongoose.Schema({
   },
   about: {
     type: String,
-    length: 75,
+    maxlength: 75, 
     default: 'We Love Fitness Tracker.'
   },
   location: {
@@ -28,19 +29,14 @@ const userSchema = new mongoose.Schema({
   currentWeight: { type: Number, default: 0 },
   profileImage: {
     type: String,
-    default: '../files/userImage.png'
-  },
-  backgroundImage: {
-    type: String,
-    default: '../files/mainImage.jpg'
+    default: '/files/userImage.png' 
   },
   followers: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     }
-  ]
-  ,
+  ],
   following: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -48,7 +44,6 @@ const userSchema = new mongoose.Schema({
     }
   ],
   notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
-
   createdAt: {
     type: Date,
     default: Date.now
@@ -57,16 +52,3 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 export default User;
-
-// userSchema.pre('save', async function (next) {
-//   if (!this.isModified('password')) return next();
-
-//   const salt = await bcrypt.genSalt(10);
-//   this.password = await bcrypt.hash(this.password, salt);
-//   next();
-// });
-
-// userSchema.methods.comparePassword = async function (password) {
-//   return await bcrypt.compare(password, this.password);
-// };
-

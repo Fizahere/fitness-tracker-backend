@@ -40,6 +40,9 @@ app.use(cors({
 
 app.options('*', cors());
 
+console.log("GitHub Token:", process.env.GITHUB_TOKEN ? "Loaded" : "Missing");
+console.log("ENV Variables:", process.env.GITHUB_TOKEN);
+
 app.use('/auth', authRoutes);
 app.use('/workout', workoutRouter);
 app.use('/nutrition', nutritionRouter);

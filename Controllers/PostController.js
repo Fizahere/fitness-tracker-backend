@@ -2,6 +2,13 @@ import Posts from '../Models/PostModel.js'
 import { upload } from '../Middlewares/imageMiddleWare.js';
 import multer from 'multer';
 import Notification from '../Models/NotificationModel.js';
+import { uploadImageToGitHub } from '../Middlewares/imageMiddleWare.js'
+import {fileURLToPath} from 'url'
+import fs from 'fs'
+import path from 'path'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const getAllPosts = async (req, res) => {
     try {
@@ -51,7 +58,6 @@ export const getPostById = async (req, res) => {
         return res.status(500).json({ msg: 'internal server error.' });
     }
 }
-
 export const createPost = async (req, res) => {
     try {
         upload(req, res, async (err) => {
@@ -65,17 +71,25 @@ export const createPost = async (req, res) => {
             }
 
             const { author, content } = req.body;
-            console.log(author, content)
-            const image = req.file.path;
+            const localFilePath = path.join(__dirname, "../files", req.file.filename);
+            const fileName = req.file.filename;
 
-            const results = new Posts({
-                author,
-                content,
-                image,
-            });
+            try {
+                const postImageUrl = await uploadImageToGitHub(localFilePath, fileName);
 
-            await results.save();
-            return res.status(201).json({ msg: 'Post created successfully.', results });
+                const newPost = new Posts({
+                    author,
+                    content,
+                    image: postImageUrl,
+                });
+
+                await newPost.save();
+                fs.unlinkSync(localFilePath);
+                return res.status(201).json({ msg: 'Post created successfully.', newPost });
+            } catch (error) {
+                console.error("Image upload error:", error.message);
+                return res.status(500).json({ msg: "Failed to upload image." });
+            }
         });
     } catch (error) {
         return res.status(500).json({ msg: 'Internal server error.', error: error.message });
@@ -99,19 +113,39 @@ export const updatePost = async (req, res) => {
             }
 
             const { author, content } = req.body;
-            const image = req.file.path;
+            // const image = req.file.path;
+            const localFilePath = path.join(__dirname, "../files", req.file.filename);
+            const fileName = req.file.filename;
 
-            const results = await Posts.findByIdAndUpdate(
-                postId,
-                { author, content, image },
-                { new: true, runValidators: true }
-            );
+            try {
+                const postImageUrl = await uploadImageToGitHub(localFilePath, fileName);
 
-            if (!results) {
-                return res.status(404).json({ msg: 'Post not found.' });
+                const results = await Posts.findByIdAndUpdate(
+                    postId,
+                    { author, content, image: postImageUrl },
+                    { new: true, runValidators: true }
+                );
+
+                await results.save();
+                fs.unlinkSync(localFilePath);
+                if (!results) {
+                    return res.status(404).json({ msg: 'Post not found.' });
+                }
+                return res.status(200).json({ msg: 'Post updated.', results });
+            } catch (error) {
+                return res.status(500).json({ msg: "failed to upload image." });
             }
+            // const results = await Posts.findByIdAndUpdate(
+            //     postId,
+            //     { author, content, image },
+            //     { new: true, runValidators: true }
+            // );
 
-            return res.status(200).json({ msg: 'Post updated.', results });
+            // if (!results) {
+            //     return res.status(404).json({ msg: 'Post not found.' });
+            // }
+
+            // return res.status(200).json({ msg: 'Post updated.', results });
         });
     } catch (error) {
         return res.status(500).json({ msg: 'Internal server error.' });
