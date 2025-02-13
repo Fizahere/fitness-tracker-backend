@@ -90,31 +90,71 @@ export const createUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         let { username, password } = req.body;
+        console.log(username,password)
+
         const user = await User.findOne({ username });
+        console.log(user)
 
         if (!user) {
-            return res.status(401).json({ msg: "invalid credentials." });
+            console.log(user)
+            return res.status(401).json({ msg: "Invalid credentials." });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ msg: "invalid credentials." });
+            return res.status(401).json({ msg: "Invalid credentials." });
         }
+
         const token = jwt.sign(
-            { user: { id: user._id, username: user.username, } },
-            "fitness_tracker",
-            // { expiresIn: '1h' }
+            { user: { id: user._id, username: user.username } },
+            process.env.JWT_SECRET || "default_secret",
+            { expiresIn: "1h" }
         );
-        res.json({ token, user: { username: user.username, } });
+
+        // Send response first, then handle notifications asynchronously
+        res.json({ token, user: { username: user.username } });
+
+        // Save notification asynchronously
         const sendNotification = new Notification({
-            toUser: targetUserId,
+            toUser: user._id, // Use user._id instead of undefined targetUserId
             message: `Welcome Back, ${user.username}.`,
-        })
+        });
         await sendNotification.save();
+        
     } catch (error) {
-        res.status(500).json({ msg: 'internal server error.' });
+        console.error("Login error:", error);
+        res.status(500).json({ msg: "Internal server error." });
     }
 };
+
+// export const loginUser = async (req, res) => {
+//     try {
+//         let { username, password } = req.body;
+//         const user = await User.findOne({ username });
+
+//         if (!user) {
+//             return res.status(401).json({ msg: "invalid credentials." });
+//         }
+
+//         const isPasswordValid = await bcrypt.compare(password, user.password);
+//         if (!isPasswordValid) {
+//             return res.status(401).json({ msg: "invalid credentials." });
+//         }
+//         const token = jwt.sign(
+//             { user: { id: user._id, username: user.username, } },
+//             "fitness_tracker",
+//             // { expiresIn: '1h' }
+//         );
+//         res.json({ token, user: { username: user.username, } });
+//         const sendNotification = new Notification({
+//             toUser: targetUserId,
+//             message: `Welcome Back, ${user.username}.`,
+//         })
+//         await sendNotification.save();
+//     } catch (error) {
+//         res.status(500).json({ msg: 'internal server error.' });
+//     }
+// };
 
 export const updateUser = async (req, res) => {
     try {

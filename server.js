@@ -12,9 +12,10 @@ import router from './Controllers/Feedback.js';
 
 dotenv.config();
 const app = express();
-const port = 2000;
+const port = 8001;
 
 connectDb();
+
 
 app.use(express.json());
 
@@ -24,8 +25,8 @@ app.use('/files', express.static(path.resolve('./files')));
 
 const allowedOrigins = [
     'https://fitness-tracker-backend-1-vqav.onrender.com',
+    'https://fitness-tracker-red-five.vercel.app',
     'http://localhost:5173',
-    'https://fitness-tracker-red-five.vercel.app'
 ];
 
 app.use(cors({
@@ -44,8 +45,8 @@ app.use(cors({
 
 app.options('*', cors());
 
-console.log("GitHub Token:", process.env.GITHUB_TOKEN ? "Loaded" : "Missing");
-console.log("ENV Variables:", process.env.GITHUB_TOKEN);
+// console.log("GitHub Token:", process.env.GITHUB_TOKEN ? "Loaded" : "Missing");
+// console.log("ENV Variables:", process.env.GITHUB_TOKEN);
 
 app.use('/auth', authRoutes);
 app.use('/workout', workoutRouter);
