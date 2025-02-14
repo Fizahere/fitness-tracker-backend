@@ -22,10 +22,11 @@ export const uploadImageToGitHub = async (filePath, fileName) => {
         let sha = null;
 
         const githubUrl = `https://api.github.com/repos/${process.env.REPO_OWNER}/${process.env.REPO_NAME}/contents/fitness_tracker_uploads/${fileName}`;
-        const headers = { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` };
+        // const headers = { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` };
 
         try {
-            const fileExistsResponse = await axios.get(githubUrl, { headers });
+            // const fileExistsResponse = await axios.get(githubUrl, { headers });
+            const fileExistsResponse = await axios.get(githubUrl);
             sha = fileExistsResponse.data.sha;
         } catch (error) {
             if (error.response?.status !== 404) {
@@ -43,7 +44,7 @@ export const uploadImageToGitHub = async (filePath, fileName) => {
                 branch: process.env.BRANCH || "main",
                 sha: sha || undefined,
             },
-            { headers }
+            // { headers }
         );
 
         console.log("Upload successful:", response.data.content.download_url);
